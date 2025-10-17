@@ -7,12 +7,10 @@
  */
 
 #include <cuda_runtime.h>
-#include <dlfcn.h>
 #include <executorch/runtime/backend/interface.h>
 #include <executorch/runtime/core/error.h>
 #include <executorch/runtime/core/evalue.h>
 #include <executorch/runtime/core/exec_aten/util/tensor_util.h>
-#include <unistd.h>
 #include <cstdio>
 
 #include <filesystem>
@@ -23,17 +21,11 @@
 // Include our shim layer headers
 #include <executorch/backends/aoti/aoti_delegate_handle.h>
 #include <executorch/backends/aoti/common_shims.h>
+#include <executorch/backends/cuda/runtime/platform/platform.h>
 #include <executorch/backends/cuda/runtime/shims/memory.h>
 #include <executorch/backends/cuda/runtime/utils.h>
 
 namespace executorch::backends::cuda {
-
-#define LOAD_SYMBOL(handle, member, name, so_handle)                        \
-  do {                                                                      \
-    handle->member = reinterpret_cast<name##Func>(dlsym(so_handle, #name)); \
-    ET_CHECK_OR_RETURN_ERROR(                                               \
-        handle->member != nullptr, AccessFailed, "Failed to load " #name);  \
-  } while (0)
 
 using namespace std;
 using namespace aoti;
@@ -60,29 +52,37 @@ class ET_EXPERIMENTAL CudaBackend final
   Error load_function_pointers_into_handle(
       void* so_handle,
       AOTIDelegateHandle* handle) const {
-    LOAD_SYMBOL(
-        handle,
-        create_with_device,
-        AOTInductorModelContainerCreateWithDevice,
-        so_handle);
+#define LOAD_SYMBOL(member, name)                                    \
+  do {                                                               \
+    auto symbol_res = get_function(so_handle, #name);                \
+    if (!symbol_res.ok()) {                                          \
+      return symbol_res.error();                                     \
+    }                                                                \
+    handle->member = reinterpret_cast<name##Func>(symbol_res.get()); \
+  } while (0)
 
-    LOAD_SYMBOL(
-        handle, delete_container, AOTInductorModelContainerDelete, so_handle);
+    LOAD_SYMBOL(create_with_device, AOTInductorModelContainerCreateWithDevice);
 
-    LOAD_SYMBOL(
-        handle,
-        get_num_inputs,
-        AOTInductorModelContainerGetNumInputs,
-        so_handle);
+    LOAD_SYMBOL(delete_container, AOTInductorModelContainerDelete);
 
-    LOAD_SYMBOL(
-        handle,
-        get_num_outputs,
-        AOTInductorModelContainerGetNumOutputs,
-        so_handle);
+    LOAD_SYMBOL(get_num_inputs, AOTInductorModelContainerGetNumInputs);
 
-    LOAD_SYMBOL(handle, run, AOTInductorModelContainerRun, so_handle);
+    LOAD_SYMBOL(get_num_outputs, AOTInductorModelContainerGetNumOutputs);
 
+    LOAD_SYMBOL(run, AOTInductorModelContainerRun);
+#undef LOAD_SYMBOL
+
+    auto symbol_res =
+        get_function(so_handle, "AOTInductorModelUpdateConstantsFromBlob");
+    if (symbol_res.ok()) {
+      handle->update_constants_from_blob =
+          reinterpret_cast<AOTInductorModelUpdateConstantsFromBlobFunc>(
+              symbol_res.get());
+    } else {
+      ET_LOG(
+          Info,
+          "Failed to load AOTInductorModelUpdateConstantsFromBlob. This .so is probably compiled on an old version of torch (<2.9.0)");
+    }
     return Error::Ok;
   }
 
@@ -111,32 +111,32 @@ class ET_EXPERIMENTAL CudaBackend final
         method_name.empty() ? "so_blob" : method_name + "_so_blob";
 
     const NamedDataMap* named_data_map = context.get_named_data_map();
-    auto aoti_cuda_buffer = named_data_map->get_data(so_blob_key.c_str());
+    auto aoti_dso_buffer = named_data_map->get_data(so_blob_key.c_str());
     ET_CHECK_OR_RETURN_ERROR(
-        aoti_cuda_buffer.ok(),
+        aoti_dso_buffer.ok(),
         Internal,
         "Failed to get data for key %s: 0x%x",
         so_blob_key.c_str(),
-        static_cast<uint32_t>(aoti_cuda_buffer.error()));
+        static_cast<uint32_t>(aoti_dso_buffer.error()));
 
     // Generate dynamic temporary file path
     filesystem::path temp_dir = filesystem::temp_directory_path();
     filesystem::path so_path =
-        temp_dir / (so_blob_key + to_string(getpid()) + ".so");
+        temp_dir / (so_blob_key + to_string(get_process_id()) + ".so");
 
     // Create a temporary file
-    ofstream outfile(so_path.c_str(), ios::binary);
+    ofstream outfile(so_path, ios::binary);
 
     // Write the ELF buffer to the temporary file
     ET_LOG(
         Info,
         "Writing %zu bytes to %s",
-        aoti_cuda_buffer->size(),
+        aoti_dso_buffer->size(),
         so_path.c_str());
 
     outfile.write(
-        static_cast<const char*>(aoti_cuda_buffer->data()),
-        aoti_cuda_buffer->size());
+        static_cast<const char*>(aoti_dso_buffer->data()),
+        aoti_dso_buffer->size());
 
     ET_CHECK_OR_RETURN_ERROR(
         outfile, AccessFailed, "Failed to write to file %s", so_path.c_str());
@@ -144,24 +144,25 @@ class ET_EXPERIMENTAL CudaBackend final
     // Finish writing the file to disk
     outfile.close();
 
-    // Load the ELF using dlopen
-    void* so_handle = dlopen(so_path.c_str(), RTLD_LAZY | RTLD_LOCAL);
-    ET_CHECK_OR_RETURN_ERROR(
-        so_handle != nullptr,
-        AccessFailed,
-        "Failed to load shared library: %s",
-        dlerror());
+    // Free the buffer immediately after writing to disk
+    aoti_dso_buffer->Free();
+    // Load the lib
+    Result<void*> lib_handle_res = load_library(so_path);
+    if (!lib_handle_res.ok()) {
+      return lib_handle_res.error();
+    }
+    void* lib_handle = lib_handle_res.get();
 
     processed->Free();
 
     // Create handle and load function pointers into it
     AOTIDelegateHandle* handle = new AOTIDelegateHandle();
-    handle->so_handle = so_handle;
+    handle->so_handle = lib_handle;
     handle->so_path = so_path.string();
 
     // Load function pointers specific to this handle's shared library
     ET_CHECK_OK_OR_RETURN_ERROR(
-        load_function_pointers_into_handle(so_handle, handle));
+        load_function_pointers_into_handle(lib_handle, handle));
 
     AOTInductorModelContainerHandle container_handle = nullptr;
 
@@ -172,6 +173,19 @@ class ET_EXPERIMENTAL CudaBackend final
 
     handle->container_handle = container_handle;
 
+    // Look into named data map for constant data
+    std::string weights_blob_key =
+        method_name.empty() ? "weights_blob" : method_name + "_weights_blob";
+    auto buffer_res = named_data_map->get_data(weights_blob_key.c_str());
+    if (buffer_res.ok() && handle->update_constants_from_blob != nullptr) {
+      ET_LOG(Info, "Found %s in named data map", weights_blob_key.c_str());
+      const void* weights_blob = buffer_res->data();
+      // Feed the weights blob into the container. Under the hood it's copying
+      // weights, so we should free the buffer immediately.
+      ET_CHECK_OK_OR_RETURN_ERROR(handle->update_constants_from_blob(
+          handle->container_handle, static_cast<const uint8_t*>(weights_blob)));
+      buffer_res->Free();
+    }
     // Create a CUDA stream for asynchronous execution
     cudaStream_t cuda_stream;
     ET_CUDA_CHECK_OR_RETURN_ERROR(cudaStreamCreate(&cuda_stream));
@@ -332,8 +346,9 @@ class ET_EXPERIMENTAL CudaBackend final
     // AOTInductorModelContainerDelete(handle->container_handle);
 
     // Now close the shared library
+    auto err = Error::Ok;
     if (handle->so_handle != nullptr) {
-      dlclose(handle->so_handle);
+      err = close_library(handle->so_handle);
     }
 
     // Remove the temporary shared library file

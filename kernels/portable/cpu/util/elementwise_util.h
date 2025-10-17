@@ -86,7 +86,7 @@ inline void dtype_specialized_elementwise_fn_impl(
   static_assert(
       (std::is_same_v<Args, std::pair<const Tensor*, SupportedTensorDtypes>> &&
        ...));
-  static constexpr std::size_t kNumInputs = sizeof...(inputs);
+  constexpr std::size_t kNumInputs = sizeof...(inputs);
   // All inputs must be of type CTYPE_COMPUTE.
   ET_DCHECK(
       ((inputs.first->scalar_type() ==

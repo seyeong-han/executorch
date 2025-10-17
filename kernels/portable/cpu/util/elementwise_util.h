@@ -24,6 +24,7 @@
 
 #include <array>
 #include <utility>
+#include <functional>
 
 namespace torch {
 namespace executor {

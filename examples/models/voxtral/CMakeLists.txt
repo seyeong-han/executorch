@@ -43,14 +43,10 @@ list(
   APPEND
   link_libraries
   optimized_native_cpu_ops_lib
-  quantized_ops_lib
-  custom_ops
   cpublas
   eigen_blas
 )
 executorch_target_link_options_shared_lib(optimized_native_cpu_ops_lib)
-executorch_target_link_options_shared_lib(quantized_ops_lib)
-executorch_target_link_options_shared_lib(custom_ops)
 
 # XNNPACK
 if(TARGET xnnpack_backend)

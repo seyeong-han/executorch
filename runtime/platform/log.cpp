@@ -112,7 +112,6 @@ void vlogf(
     size_t line,
     const char* format,
     va_list args) {
-#if ET_LOG_ENABLED
 
   // Maximum length of a log message.
   static constexpr size_t kMaxLogMessageLength = 256;
@@ -135,7 +134,6 @@ void vlogf(
   pal_emit_log_message(
       timestamp, pal_level, filename, function, line, buffer, valid_length);
 
-#endif // ET_LOG_ENABLED
 }
 
 } // namespace internal

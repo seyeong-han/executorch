@@ -29,9 +29,7 @@
  * Enable logging by default if compiler option is not provided.
  * This should facilitate less confusion for those developing ExecuTorch.
  */
-#ifndef ET_LOG_ENABLED
 #define ET_LOG_ENABLED 1
-#endif // !defined(ET_LOG_ENABLED)
 
 // Even though it is supposed to be "portable" some toolchains
 // do not define, so providing a definition here

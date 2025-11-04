@@ -52,6 +52,7 @@ import contextlib
 # imports.
 import logging
 import os
+import platform
 import re
 import shutil
 import site
@@ -90,6 +91,23 @@ def _is_macos() -> bool:
 
 def _is_windows() -> bool:
     return sys.platform == "win32"
+
+
+# Duplicate of the one in backends.qualcomm.scripts.download_qnn_sdk to avoid
+# import errors.
+def is_linux_x86() -> bool:
+    """
+    Check if the current platform is Linux x86_64.
+
+    Returns:
+        bool: True if the system is Linux x86_64, False otherwise.
+    """
+    return platform.system().lower() == "linux" and platform.machine().lower() in (
+        "x86_64",
+        "amd64",
+        "i386",
+        "i686",
+    )
 
 
 class Version:
@@ -465,8 +483,6 @@ class InstallerBuildExt(build_ext):
 
         try:
             # Following code is for building the Qualcomm backend.
-            from backends.qualcomm.scripts.download_qnn_sdk import is_linux_x86
-
             if is_linux_x86():
                 os.environ["EXECUTORCH_BUILDING_WHEEL"] = "1"
                 from backends.qualcomm.scripts.download_qnn_sdk import _download_qnn_sdk
@@ -535,8 +551,8 @@ class InstallerBuildExt(build_ext):
                         self.copy_file(str(so_src), str(so_dst))
                         logging.info(f"Copied Qualcomm backend: {so_src} -> {so_dst}")
 
-        except ImportError as e:
-            logging.error(f"Fail to build Qualcomm backend: {e}")
+        except ImportError:
+            logging.error(f"Fail to build Qualcomm backend")
             logging.exception("Import error")
 
         if self.editable_mode:

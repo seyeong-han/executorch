@@ -552,7 +552,7 @@ class InstallerBuildExt(build_ext):
                         logging.info(f"Copied Qualcomm backend: {so_src} -> {so_dst}")
 
         except ImportError:
-            logging.error(f"Fail to build Qualcomm backend")
+            logging.error("Fail to build Qualcomm backend")
             logging.exception("Import error")
 
         if self.editable_mode:

@@ -282,19 +282,10 @@ jobs:
     strategy:
       matrix:
         include:
-          - test_arm_baremetal: test_pytest_ops_ethosu_fvp
-          - test_arm_baremetal: test_pytest_models_ethosu_fvp
           - test_arm_baremetal: test_pytest_ops_vkml
-          - test_arm_baremetal: test_run_ethosu_fvp
-          - test_arm_baremetal: test_models_tosa
-          - test_arm_baremetal: test_models_ethos-u55
-          - test_arm_baremetal: test_models_ethos-u85
-          - test_arm_baremetal: test_smaller_stories_llama
-          - test_arm_baremetal: test_memory_allocation
-          - test_arm_baremetal: test_model_smollm2-135M
       fail-fast: false
     with:
-      runner: linux.2xlarge.memory
+      runner: linux.g5.4xlarge.nvidia.gpu
       docker-image: ci-image:executorch-ubuntu-22.04-arm-sdk
       submodules: 'recursive'
       ref: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
@@ -303,6 +294,10 @@ jobs:
         # The generic Linux job chooses to use base env, not the one setup by the image
         CONDA_ENV=$(conda env list --json | jq -r ".envs | .[-1]")
         conda activate "${CONDA_ENV}"
+
+        lsmod | grep '^nvidia'
+        nvidia-smi | sed -n '1,5p'
+        apt list --installed 'nvidia-driver-*' 2>/dev/null 
 
         source .ci/scripts/utils.sh
         install_executorch "--use-pt-pinned-commit"

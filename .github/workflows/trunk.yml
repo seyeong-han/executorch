@@ -295,7 +295,7 @@ jobs:
         CONDA_ENV=$(conda env list --json | jq -r ".envs | .[-1]")
         conda activate "${CONDA_ENV}"
 
-        lsmod | grep '^nvidia'
+        cat /proc/modules | grep '^nvidia'
         nvidia-smi | sed -n '1,5p'
         apt list --installed 'nvidia-driver-*' 2>/dev/null 
 

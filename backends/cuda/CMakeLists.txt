@@ -28,6 +28,9 @@ if(NOT EXECUTORCH_ROOT)
   set(EXECUTORCH_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../..)
 endif()
 
+# Use dynamic linking for CUDA runtime
+set(CUDA_USE_STATIC_CUDA_RUNTIME OFF)
+
 find_package(CUDAToolkit REQUIRED)
 
 # Use ExecutorTorch's standard way to find PyTorch libraries for AOTI
@@ -176,7 +179,7 @@ target_link_options(
 # consumers.
 target_link_libraries(
   aoti_cuda_backend PUBLIC cuda_platform extension_tensor cuda_tensor_maker
-                           CUDA::cudart_shared ${CMAKE_DL_LIBS}
+                           CUDA::cudart ${CMAKE_DL_LIBS}
 )
 
 if(MSVC)

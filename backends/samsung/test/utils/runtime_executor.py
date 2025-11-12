@@ -55,6 +55,7 @@ class EDBTestManager:
         self._edb(["-E", f"mkdir -p {self.work_directory}"])
         self._edb(["-U", self.pte_file, self.work_directory])
         self._edb(["-U", self.runner, self.work_directory])
+        self._edb(["-E", f"ls {self.work_directory}"])  //temp
 
         for input_file in self.input_files:
             input_file_path = os.path.join(self.artifacts_dir, input_file)
@@ -86,6 +87,7 @@ class EDBTestManager:
         )
 
         self._edb(["-E", f"{enn_executor_runner_cmd}"])
+        slef._edb(["-E", f"history"])  // temp
 
     def pull(self, output_path):
         self._edb(["-D", self.output_folder, output_path])
@@ -107,6 +109,7 @@ class RuntimeExecutor:
             test_manager.push()
             test_manager.execute()
             host_output_save_dir = os.path.join(tmp_dir, "output")
+            os.makedirs(host_output_save_dir, exist_ok=True)
             test_manager.pull(host_output_save_dir)
 
             model_outputs = self._get_model_outputs()

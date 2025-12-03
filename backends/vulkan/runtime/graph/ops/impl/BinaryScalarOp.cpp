@@ -76,8 +76,13 @@ void pow_tensor_scalar(ComputeGraph& graph, const std::vector<ValueRef>& args) {
   return add_binary_scalar_op_node(graph, args[0], args[1], args[2], "pow");
 }
 
+void mul_scalar(ComputeGraph& graph, const std::vector<ValueRef>& args) {
+  return add_binary_scalar_op_node(graph, args[0], args[1], args[2], "mul");
+}
+
 REGISTER_OPERATORS {
   VK_REGISTER_OP(aten.pow.Tensor_Scalar, pow_tensor_scalar);
+  VK_REGISTER_OP(aten.mul.Scalar, mul_scalar);
 }
 
 } // namespace vkcompute

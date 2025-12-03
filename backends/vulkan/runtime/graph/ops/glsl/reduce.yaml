@@ -23,6 +23,11 @@ reduce:
       INIT_ACCUM: first_val
       UPDATE_ACCUM: max(accum, new_val)
       POSTPROCESS: accum
+      generate_variant_forall:
+        DTYPE:
+          - VALUE: bool
+          - VALUE: float
+          - VALUE: half
     - NAME: amin
       INIT_ACCUM: first_val
       UPDATE_ACCUM: min(accum, new_val)

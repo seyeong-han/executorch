@@ -32,6 +32,13 @@ optimum-cli export executorch \
   --output_dir="path/to/output/dir"
 ```
 
+```bash
+python examples/models/gemma3/export_gemma3_vulkan.py \
+  --model "google/gemma-3-4b-it" \
+  --output_dir "vulkan" \
+  --dtype float16
+```
+
 This will generate:
 - `model.pte` - The exported model
 - `aoti_cuda_blob.ptd` - The CUDA kernel blob required for runtime
@@ -83,22 +90,34 @@ make gemma3-cuda
 
 # Build the Gemma3 runner with CPU enabled
 make gemma3-cpu
+
+# Build the Gemma3 runner with Vulkan enabled
+make gemma3-vulkan
 ```
 
 ## Running the model
 You need to provide the following files to run Gemma3:
 - `model.pte` - The exported model file
-- `aoti_cuda_blob.ptd` - The CUDA kernel blob
+- `aoti_cuda_blob.ptd` - The CUDA kernel blob (required for CUDA backend only)
 - `tokenizer.json` - The tokenizer file
 - An image file (PNG, JPG, etc.)
 
-### Example usage
+### Example usage (CUDA)
 ```bash
 ./cmake-out/examples/models/gemma3/gemma3_e2e_runner \
   --model_path path/to/model.pte \
   --data_path path/to/aoti_cuda_blob.ptd \
   --tokenizer_path path/to/tokenizer.json \
   --image_path docs/source/_static/img/et-logo.png \ # here we use the ExecuTorch logo as an example
+  --temperature 0
+```
+
+### Example usage (Vulkan)
+```bash
+./cmake-out/examples/models/gemma3/gemma3_e2e_runner \
+  --model_path vulkan/model.pte \
+  --tokenizer_path tokenizer.json \
+  --image_path docs/source/_static/img/et-logo.png \
   --temperature 0
 ```
 

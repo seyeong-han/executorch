@@ -128,7 +128,7 @@ void reduce_nonpacked_dim(const ivec2 tid, ivec3 scan_pos) {
       }
     }
     scan_pos[reduce_dim] = tid.x;
-    write_texel(tout, scan_pos, POSTPROCESS(accum));
+    write_texel(tout, scan_pos, ${"uvec4" if DTYPE == "bool" else ""}(POSTPROCESS(accum)));
   }
 }
 
@@ -190,7 +190,7 @@ void reduce_packed_dim(const ivec2 tid, ivec3 scan_pos) {
     }
 
     scan_pos[reduce_dim] = tid.x;
-    write_texel(tout, scan_pos, POSTPROCESS(vec4(accum_final, 0, 0, 0)));
+    write_texel(tout, scan_pos, ${"uvec4" if DTYPE == "bool" else ""}(POSTPROCESS(vec4(accum_final, 0, 0, 0))));
   }
 }
 

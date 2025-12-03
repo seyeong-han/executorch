@@ -158,6 +158,17 @@ DEFINE_ACTIVATION_FN(hardswish);
 DEFINE_ACTIVATION_FN(hardsigmoid);
 DEFINE_LEAKY_RELU_FN(leaky_relu);
 DEFINE_ACTIVATION_FN(round);
+DEFINE_ACTIVATION_FN(logical_not);
+
+void eq_scalar(ComputeGraph& graph, const std::vector<ValueRef>& args) {
+  return add_unary_op_node(
+      graph,
+      args[0],
+      get_val_or_inf(graph, args[1], /*max=*/false),
+      kDummyFloat,
+      args[2],
+      "eq_scalar");
+}
 
 REGISTER_OPERATORS {
   VK_REGISTER_OP(aten.abs.default, abs);
@@ -179,6 +190,8 @@ REGISTER_OPERATORS {
   VK_REGISTER_OP(aten.hardsigmoid.default, hardsigmoid);
   VK_REGISTER_OP(aten.leaky_relu.default, leaky_relu);
   VK_REGISTER_OP(aten.round.default, round);
+  VK_REGISTER_OP(aten.logical_not.default, logical_not);
+  VK_REGISTER_OP(aten.eq.Scalar, eq_scalar);
 }
 
 } // namespace vkcompute

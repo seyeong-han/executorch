@@ -46,3 +46,17 @@ unary_op:
       OPERATOR: leaky_relu(X, A)
     - NAME: round
       OPERATOR: round(X)
+    - NAME: logical_not
+      OPERATOR: logical_not(X)
+      generate_variant_forall:
+        DTYPE:
+          - VALUE: bool
+          - VALUE: float
+          - VALUE: half
+    - NAME: eq_scalar
+      OPERATOR: eq_scalar(X, A)
+      generate_variant_forall:
+        DTYPE:
+          - VALUE: bool
+          - VALUE: float
+          - VALUE: half

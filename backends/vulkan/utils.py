@@ -799,6 +799,8 @@ NO_STORAGE = TensorRepSet(set(), set())
 ALL_STORAGES_REPSET = TensorRepSet(
     universal_memory_layout_set, universal_memory_layout_set
 )
+print(f"DEBUG: all_memory_layouts: {all_memory_layouts}")
+print(f"DEBUG: ANY_BUFFER: {ANY_BUFFER}")
 
 
 class TensorRepSetList:

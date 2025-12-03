@@ -28,7 +28,7 @@ endif()
 set(_common_include_directories ${EXECUTORCH_ROOT}/..)
 
 # Need this for gflags for some reason
-set(gflags_DIR ${CMAKE_CURRENT_BINARY_DIR}/../../../third-party/gflags)
+# set(gflags_DIR ${CMAKE_CURRENT_BINARY_DIR}/../../../third-party/gflags)
 find_package(gflags REQUIRED)
 
 # Find `executorch` libraries, same as for gflags
@@ -60,6 +60,12 @@ if(TARGET xnnpack_backend)
   endif()
   list(APPEND link_libraries ${xnnpack_backend_libs})
   executorch_target_link_options_shared_lib(xnnpack_backend)
+endif()
+
+# Vulkan backend
+if(TARGET vulkan_backend)
+  list(APPEND link_libraries vulkan_backend)
+  executorch_target_link_options_shared_lib(vulkan_backend)
 endif()
 
 # Add LLM runner and extension module

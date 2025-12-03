@@ -1,0 +1,6 @@
+DEBUG: Registering transfer ops including index_put
+DEBUG: Registering transfer ops including index_put
+DEBUG: Registering transfer ops including index_put
+DEBUG: Registering transfer ops including index_put
+DEBUG: Registering transfer ops including index_put
+DEBUG: Registering transfer ops including index_put

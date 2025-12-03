@@ -25,6 +25,56 @@ def allow_node(node: torch.fx.Node) -> bool:
     return True
 
 
+ImageExtents = Any  # Tuple[int, int, int] but Tuple might not be imported from typing
+DEFAULT_TEXTURE_LIMITS = (16384, 16384, 2048)
+
+
+def is_single_tensor_node(node: torch.fx.Node) -> bool:
+    if "val" not in node.meta:
+        return False
+    if isinstance(node.meta["val"], FakeTensor):
+        return True
+    return False
+
+
+def is_unsqueezed_vector(node: torch.fx.Node) -> bool:
+    if not is_single_tensor_node(node):
+        return False
+    tensor = node.meta["val"]
+    assert isinstance(tensor, FakeTensor)
+    if len(tensor.shape) < 1:
+        return False
+    return all(dim == 1 for dim in tensor.shape[:-1])
+
+
+def nchw_dim_to_whcn_dim(nchw_dim: int, ndim: int) -> int:
+    if nchw_dim < 0:
+        nchw_dim += ndim
+    assert nchw_dim >= 0 and nchw_dim < ndim
+    whcn_dim = (ndim - 1) - nchw_dim
+    return whcn_dim
+
+
+def normalize_dims(dims: Union[int, List[int]], ndim: int) -> Union[int, List[int]]:
+    if isinstance(dims, int):
+        if dims < 0:
+            dims += ndim
+        return dims
+    normalized = []
+    for d in dims:
+        if d < 0:
+            d += ndim
+        normalized.append(d)
+    return normalized
+
+
+def make_union(repset1, repset2):
+    return utils.TensorRepSet(
+        repset1.valid_buffer_layouts | repset2.valid_buffer_layouts,
+        repset1.valid_texture_layouts | repset2.valid_texture_layouts,
+    )
+
+
 class OpFeatures:
     __slots__ = [
         # Sets of possible (storage types, memory layouts) to use for the input tensor(s)
@@ -79,7 +129,7 @@ class OpFeatures:
     def make_op_repsets(
         self,
         op_node: torch.fx.Node,
-        texture_limits: utils.ImageExtents = utils.DEFAULT_TEXTURE_LIMITS,
+        texture_limits: ImageExtents = DEFAULT_TEXTURE_LIMITS,
     ) -> utils.OpRepSets:
         inputs_storage = self.inputs_storage
         outputs_storage = self.outputs_storage
@@ -122,7 +172,7 @@ def update_features(aten_op):
     [
         operator.getitem,
         # Symbolic integer ops
-        torch.ops.aten.sym_size.int,
+        # torch.ops.aten.sym_size.int,
         operator.add,
         operator.sub,
         operator.lt,
@@ -223,6 +273,10 @@ def register_binary_op():
 @update_features(
     [
         exir_ops.edge.aten.pow.Tensor_Scalar,
+        torch.ops.aten.pow.Tensor_Scalar,
+        "aten::pow.Tensor_Scalar",
+        exir_ops.edge.aten.mul.Scalar,
+        exir_ops.edge.aten.eq.Scalar,
     ]
 )
 def register_binary_scalar_op():
@@ -250,6 +304,7 @@ def register_binary_scalar_op():
         exir_ops.edge.aten.tanh.default,
         exir_ops.edge.aten.round.default,
         exir_ops.edge.aten.leaky_relu.default,
+        exir_ops.edge.aten.logical_not.default,
     ]
 )
 def register_unary_op():
@@ -340,7 +395,7 @@ def register_mm_op():
 @update_features(
     [
         exir_ops.edge.aten._weight_int8pack_mm.default,
-        exir_ops.edge.et_vk.linear_qcs4w.default,
+        # exir_ops.edge.et_vk.linear_qcs4w.default,
     ]
 )
 def register_int8_mm_op():
@@ -353,8 +408,8 @@ def register_int8_mm_op():
 
 @update_features(
     [
-        exir_ops.edge.et_vk.linear_q8ta_q8csw.default,
-        exir_ops.edge.et_vk.linear_q4gsw.default,
+        # exir_ops.edge.et_vk.linear_q8ta_q8csw.default,
+        # exir_ops.edge.et_vk.linear_q4gsw.default,
     ]
 )
 def register_quantized_linear_ops():
@@ -364,7 +419,7 @@ def register_quantized_linear_ops():
     )
 
 
-@update_features(exir_ops.edge.et_vk.linear_dq8ca_q4gsw.default)
+# @update_features(exir_ops.edge.et_vk.linear_dq8ca_q4gsw.default)
 def register_linear_dqa_qw_ops():
     return OpFeatures(
         inputs_storage=[
@@ -395,7 +450,7 @@ def register_softmax_op():
 
 
 def get_dims_reduced(node: torch.fx.Node) -> Union[int, List[int]]:
-    ndim = utils.ndim_of(node.args[0])
+    ndim = ndim_of(node.args[0])
     assert ndim is not None
     dims_reduced = None
     if len(node.args) >= 2:
@@ -407,14 +462,14 @@ def get_dims_reduced(node: torch.fx.Node) -> Union[int, List[int]]:
 
         # Special case for reducing tensors with shape [1, N] - this is equivalent to
         # reducing the last dim.
-        if utils.is_unsqueezed_vector(node) and ndim == 2:
+        if is_unsqueezed_vector(node) and ndim == 2:
             dims_reduced = 1
 
     if isinstance(dims_reduced, (list, tuple)) and len(dims_reduced) == 1:
         dims_reduced = dims_reduced[0]
 
     assert isinstance(dims_reduced, (int, list, tuple))
-    return utils.normalize_dims(dims_reduced, ndim)
+    return normalize_dims(dims_reduced, ndim)
 
 
 def get_keepdim_setting(node: torch.fx.Node) -> bool:
@@ -426,12 +481,18 @@ def get_keepdim_setting(node: torch.fx.Node) -> bool:
     return False
 
 
+def ndim_of(x):
+    if hasattr(x, "meta") and "val" in x.meta:
+        return x.meta["val"].dim()
+    return None
+
+
 def is_reduce_node_supported_by_per_row_impl(node: torch.fx.Node) -> bool:
     """
     Checks if a reduction node is supported by the Vulkan backend's reduce per row
     special case implementation.
     """
-    input_ndim = utils.ndim_of(node.args[0])
+    input_ndim = ndim_of(node.args[0])
     assert input_ndim is not None
     dims_reduced = get_dims_reduced(node)
 
@@ -462,26 +523,26 @@ def pick_storage_for_reduce(node: torch.fx.Node):
     inputs_storage = utils.NO_STORAGE
     outputs_storage = utils.NO_STORAGE
 
-    ndim = utils.ndim_of(node.args[0])
+    ndim = ndim_of(node.args[0])
     dim_list = get_dims_reduced(node)
 
     if is_reduce_node_supported_by_general_impl(node):
-        inputs_storage = inputs_storage.make_union(utils.ANY_TEXTURE)
+        inputs_storage = make_union(inputs_storage, utils.ANY_TEXTURE)
         outputs_storage = inputs_storage
 
     # For 1D reductions of the last dim, a special reduce per row case is implemented
     # for buffer backed tensors.
     if is_reduce_node_supported_by_per_row_impl(node):
-        inputs_storage = inputs_storage.make_union(utils.CONTIGUOUS_BUFFER)
+        inputs_storage = make_union(inputs_storage, utils.CONTIGUOUS_BUFFER)
         outputs_storage = inputs_storage
         return inputs_storage, outputs_storage
 
     # For 2D reductions, the packed dimension cannot be one of the reduced dims
     if isinstance(dim_list, (list, tuple)) and len(dim_list) == 2:
         # pyre-ignore[6]
-        reduce_dim1_whcn = utils.nchw_dim_to_whcn_dim(dim_list[0], ndim)
+        reduce_dim1_whcn = nchw_dim_to_whcn_dim(dim_list[0], ndim)
         # pyre-ignore[6]
-        reduce_dim2_whcn = utils.nchw_dim_to_whcn_dim(dim_list[1], ndim)
+        reduce_dim2_whcn = nchw_dim_to_whcn_dim(dim_list[1], ndim)
 
         possible_packed_dims = {0, 1, 2}
         possible_packed_dims.discard(reduce_dim1_whcn)
@@ -511,6 +572,7 @@ def pick_storage_for_reduce(node: torch.fx.Node):
         exir_ops.edge.aten.amin.default,
         exir_ops.edge.aten.argmax.default,
         exir_ops.edge.aten.argmin.default,
+        exir_ops.edge.aten.any.dim,
     ]
 )
 def register_reduce_op():
@@ -539,7 +601,7 @@ def register_2d_pool_op():
 @update_features(
     [
         exir_ops.edge.aten.convolution.default,
-        exir_ops.edge.et_vk.conv_with_clamp.default,
+        # exir_ops.edge.et_vk.conv_with_clamp.default,
     ]
 )
 def register_convolution_op():
@@ -583,8 +645,8 @@ def register_convolution_op():
 
 @update_features(
     [
-        exir_ops.edge.et_vk.conv2d_q8ta_q8csw_q8to.default,
-        exir_ops.edge.et_vk.conv2d_q8ta_q8csw_q8to_dw.default,
+        # exir_ops.edge.et_vk.conv2d_q8ta_q8csw_q8to.default,
+        # exir_ops.edge.et_vk.conv2d_q8ta_q8csw_q8to_dw.default,
     ]
 )
 def register_quantized_conv_op():
@@ -613,7 +675,7 @@ def register_quantized_conv_op():
 
 @update_features(
     [
-        exir_ops.edge.et_vk.add_q8ta_q8ta_q8to.default,
+        # exir_ops.edge.et_vk.add_q8ta_q8ta_q8to.default,
     ]
 )
 def register_quantized_binary_op():
@@ -624,38 +686,38 @@ def register_quantized_binary_op():
     )
 
 
-@update_features(
-    [
-        exir_ops.edge.quantized_decomposed.quantize_per_tensor.default,
-        exir_ops.edge.quantized_decomposed.quantize_per_tensor.tensor,
-    ]
-)
-def register_quantize_op():
-    return OpFeatures(
-        inputs_storage=[
-            utils.CHANNELS_PACKED_TEXTURE_OR_CONTIGUOUS_BUFFER,
-        ],
-        outputs_storage=[
-            utils.PACKED_INT8_4W4C_BUFFER,
-        ],
-    )
+# @update_features(
+#     [
+#         exir_ops.edge.quantized_decomposed.quantize_per_tensor.default,
+#         exir_ops.edge.quantized_decomposed.quantize_per_tensor.tensor,
+#     ]
+# )
+# def register_quantize_op():
+#     return OpFeatures(
+#         inputs_storage=[
+#             utils.CHANNELS_PACKED_TEXTURE_OR_CONTIGUOUS_BUFFER,
+#         ],
+#         outputs_storage=[
+#             utils.PACKED_INT8_4W4C_BUFFER,
+#         ],
+#     )
 
 
-@update_features(
-    [
-        exir_ops.edge.quantized_decomposed.dequantize_per_tensor.default,
-        exir_ops.edge.quantized_decomposed.dequantize_per_tensor.tensor,
-    ]
-)
-def register_dequantize_op():
-    return OpFeatures(
-        inputs_storage=[
-            utils.PACKED_INT8_4W4C_BUFFER,
-        ],
-        outputs_storage=[
-            utils.CHANNELS_PACKED_TEXTURE_OR_CONTIGUOUS_BUFFER,
-        ],
-    )
+# @update_features(
+#     [
+#         exir_ops.edge.quantized_decomposed.dequantize_per_tensor.default,
+#         exir_ops.edge.quantized_decomposed.dequantize_per_tensor.tensor,
+#     ]
+# )
+# def register_dequantize_op():
+#     return OpFeatures(
+#         inputs_storage=[
+#             utils.PACKED_INT8_4W4C_BUFFER,
+#         ],
+#         outputs_storage=[
+#             utils.CHANNELS_PACKED_TEXTURE_OR_CONTIGUOUS_BUFFER,
+#         ],
+#     )
 
 
 @update_features("llama::sdpa_with_kv_cache")
@@ -680,7 +742,7 @@ def register_sdpa_ops():
     )
 
 
-@update_features(exir_ops.edge.et_vk.apply_rotary_emb.default)
+# @update_features(exir_ops.edge.et_vk.apply_rotary_emb.default)
 def register_rotary_emb_op():
     return OpFeatures(
         inputs_storage=utils.CONTIGUOUS_ANY,
@@ -708,6 +770,7 @@ def register_view_ops():
         exir_ops.edge.aten.clone.default,
         exir_ops.edge.aten.permute_copy.default,
         exir_ops.edge.aten.gather.default,
+        exir_ops.edge.aten.alias_copy.default,
     ]
 )
 def register_view_ops_with_buffer_meta():
@@ -741,9 +804,13 @@ def register_cat_op():
         exir_ops.edge.aten.select_copy.int,
         exir_ops.edge.aten.slice_copy.Tensor,
         exir_ops.edge.aten.split_with_sizes_copy.default,
+        exir_ops.edge.aten.index_put.default,
+        "aten::index_put.default",
+        "aten.index_put.default",
     ]
 )
 def register_transfer_ops():
+    print("DEBUG: Registering transfer ops including index_put")
     return OpFeatures(
         inputs_storage=utils.ANY_STORAGE,
         supports_resize=True,
@@ -767,11 +834,12 @@ def register_transfer_ops():
         exir_ops.edge.aten.ones.default,
         exir_ops.edge.aten.ones_like.default,
         exir_ops.edge.aten.scalar_tensor.default,
+        "aten::scalar_tensor",
         exir_ops.edge.aten.upsample_nearest2d.vec,
         exir_ops.edge.aten.upsample_bilinear2d.vec,
         exir_ops.edge.aten.zeros.default,
         exir_ops.edge.aten.zeros_like.default,
-        exir_ops.edge.et_vk.grid_priors.default,
+        # exir_ops.edge.et_vk.grid_priors.default,
     ]
 )
 def register_ported_op():
@@ -789,6 +857,14 @@ def register_ported_op():
 def register_ported_op_all_packed_dims():
     return OpFeatures(
         inputs_storage=utils.ANY_TEXTURE,
+    )
+
+
+@update_features(exir_ops.edge.aten.where.self)
+def register_where_op():
+    return OpFeatures(
+        inputs_storage=utils.ANY_STORAGE,
+        supports_resize=True,
     )
 
 
@@ -835,6 +911,21 @@ def register_ported_ops_with_prepacking_all_dims():
         inputs_storage=utils.ANY_TEXTURE,
         supports_prepacking=True,
         supports_resize=True,
+    )
+
+
+@update_features(
+    [
+        "et_vk::binary_add_with_clamp",
+        "et_vk::binary_sub_with_clamp",
+        "et_vk::binary_mul_with_clamp",
+        "et_vk::binary_div_with_clamp",
+    ]
+)
+def register_binary_clamp_ops():
+    return OpFeatures(
+        inputs_storage=utils.ANY_TEXTURE,
+        supports_prepacking=True,
     )
 
 

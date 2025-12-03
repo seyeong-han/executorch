@@ -1,0 +1,1459 @@
+==> Building and installing ExecuTorch with Vulkan...
+cmake --workflow --preset llm-release-vulkan
+Executing workflow step 1 of 2: configure preset "llm-release-vulkan"
+
+Preset CMake variables:
+
+  CMAKE_BUILD_TYPE="Release"
+  CMAKE_INSTALL_PREFIX="/home/pe/project/executorch/cmake-out"
+  CMAKE_OSX_DEPLOYMENT_TARGET="12.0"
+  EXECUTORCH_BUILD_PRESET_FILE="/home/pe/project/executorch/tools/cmake/preset/llm.cmake"
+  EXECUTORCH_BUILD_VULKAN="ON"
+
+-- Loading build preset: /home/pe/project/executorch/tools/cmake/preset/llm.cmake
+-- ccache not found, builds will not be cached
+-- Using the multi-header code from /home/pe/project/executorch/third-party/json/include/
+CMake Deprecation Warning at third-party/gflags/CMakeLists.txt:73 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+
+
+CMake Deprecation Warning at third-party/flatcc/CMakeLists.txt:2 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+
+
+-- dist install dir /home/pe/project/executorch/third-party/flatcc
+-- lib install dir /home/pe/project/executorch/third-party/flatcc/lib
+-- Setting GNU C compiler options with c11 and Posix
+-- Disabling -pedantic for GCC >= 8.0
+-- Disabling GNU C compiler warnings: -Wstringop-truncation -Wno-format-overflow
+-- GCC_VERSION: 15
+
+-- Configured C_FLAGS:  -DFLATCC_REFLECTION=0 -std=c11 -Wall -Wextra -Wno-stringop-truncation -Wno-format-overflow -Wno-misleading-indentation -DPORTABLE_POSIX_MEMALIGN=1 -Werror -Wno-unused-function -Wsign-conversion
+CMake Deprecation Warning at backends/xnnpack/third-party/FXdiv/CMakeLists.txt:1 (CMAKE_MINIMUM_REQUIRED):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+
+
+CMake Deprecation Warning at backends/xnnpack/third-party/cpuinfo/CMakeLists.txt:1 (CMAKE_MINIMUM_REQUIRED):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+
+
+CMake Deprecation Warning at backends/xnnpack/third-party/pthreadpool/CMakeLists.txt:10 (CMAKE_MINIMUM_REQUIRED):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+
+
+'python' '-c' 'import importlib.util; print(importlib.util.find_spec('torch').submodule_search_locations[0])'
+-- Generating selected operator lib:
+--   LIB_NAME: portable_ops_lib
+--   OPS_SCHEMA_YAML: /home/pe/project/executorch/kernels/portable/functions.yaml
+--   ROOT_OPS: 
+--   INCLUDE_ALL_OPS: 
+--   OPS_FROM_MODEL: 
+--   DTYPE_SELECTIVE_BUILD: 
+Command - python;-m;codegen.tools.gen_oplist;--output_path=/home/pe/project/executorch/cmake-out/kernels/portable/portable_ops_lib/selected_operators.yaml;--ops_schema_yaml_path="/home/pe/project/executorch/kernels/portable/functions.yaml"
+-- Generating kernel bindings:
+--   LIB_NAME: portable_ops_lib
+--   FUNCTIONS_YAML: /home/pe/project/executorch/kernels/portable/functions.yaml
+--   CUSTOM_OPS_YAML: 
+--   ADD_EXCEPTION_BOUNDARY: FALSE
+--   DTYPE_SELECTIVE_BUILD: 
+Generated files /home/pe/project/executorch/cmake-out/kernels/portable/portable_ops_lib/RegisterCodegenUnboxedKernelsEverything.cpp;/home/pe/project/executorch/cmake-out/kernels/portable/portable_ops_lib/Functions.h;/home/pe/project/executorch/cmake-out/kernels/portable/portable_ops_lib/NativeFunctions.h
+-- Generating operator lib:
+--   LIB_NAME: portable_ops_lib
+--   KERNEL_LIBS: portable_kernels
+--   DEPS: executorch_core
+--   DTYPE_SELECTIVE_BUILD: 
+-- Generating selected operator lib:
+--   LIB_NAME: optimized_portable_ops_lib
+--   OPS_SCHEMA_YAML: /home/pe/project/executorch/kernels/portable/functions.yaml
+--   ROOT_OPS: 
+--   INCLUDE_ALL_OPS: 
+--   OPS_FROM_MODEL: 
+--   DTYPE_SELECTIVE_BUILD: 
+Command - python;-m;codegen.tools.gen_oplist;--output_path=/home/pe/project/executorch/cmake-out/kernels/portable/optimized_portable_ops_lib/selected_operators.yaml;--ops_schema_yaml_path="/home/pe/project/executorch/kernels/portable/functions.yaml"
+-- Generating kernel bindings:
+--   LIB_NAME: optimized_portable_ops_lib
+--   FUNCTIONS_YAML: /home/pe/project/executorch/kernels/portable/functions.yaml
+--   CUSTOM_OPS_YAML: 
+--   ADD_EXCEPTION_BOUNDARY: FALSE
+--   DTYPE_SELECTIVE_BUILD: 
+-- Generating operator lib:
+--   LIB_NAME: optimized_portable_ops_lib
+--   KERNEL_LIBS: optimized_portable_kernels
+--   DEPS: executorch_core
+--   DTYPE_SELECTIVE_BUILD: 
+-- Generating selected operator lib:
+--   LIB_NAME: optimized_ops_lib
+--   OPS_SCHEMA_YAML: /home/pe/project/executorch/kernels/optimized/optimized.yaml
+--   ROOT_OPS: 
+--   INCLUDE_ALL_OPS: 
+--   OPS_FROM_MODEL: 
+--   DTYPE_SELECTIVE_BUILD: 
+Command - python;-m;codegen.tools.gen_oplist;--output_path=/home/pe/project/executorch/cmake-out/kernels/optimized/optimized_ops_lib/selected_operators.yaml;--ops_schema_yaml_path="/home/pe/project/executorch/kernels/optimized/optimized.yaml"
+-- Generating kernel bindings:
+--   LIB_NAME: optimized_ops_lib
+--   FUNCTIONS_YAML: /home/pe/project/executorch/kernels/optimized/optimized.yaml
+--   CUSTOM_OPS_YAML: 
+--   ADD_EXCEPTION_BOUNDARY: TRUE
+--   DTYPE_SELECTIVE_BUILD: 
+Generated files /home/pe/project/executorch/cmake-out/kernels/optimized/optimized_ops_lib/RegisterCodegenUnboxedKernelsEverything.cpp;/home/pe/project/executorch/cmake-out/kernels/optimized/optimized_ops_lib/Functions.h;/home/pe/project/executorch/cmake-out/kernels/optimized/optimized_ops_lib/NativeFunctions.h
+-- Generating operator lib:
+--   LIB_NAME: optimized_ops_lib
+--   KERNEL_LIBS: optimized_kernels
+--   DEPS: executorch_core
+--   DTYPE_SELECTIVE_BUILD: 
+-- Merging kernel yaml files:
+--   FUNCTIONS_YAML: /home/pe/project/executorch/kernels/optimized/optimized.yaml
+--   FALLBACK_YAML: /home/pe/project/executorch/kernels/portable/functions.yaml
+--   OUTPUT_DIR: /home/pe/project/executorch/cmake-out/configurations
+-- Generating selected operator lib:
+--   LIB_NAME: optimized_native_cpu_ops_lib
+--   OPS_SCHEMA_YAML: /home/pe/project/executorch/cmake-out/configurations/merged.yaml
+--   ROOT_OPS: 
+--   INCLUDE_ALL_OPS: 
+--   OPS_FROM_MODEL: 
+--   DTYPE_SELECTIVE_BUILD: 
+Command - python;-m;codegen.tools.gen_oplist;--output_path=/home/pe/project/executorch/cmake-out/configurations/optimized_native_cpu_ops_lib/selected_operators.yaml;--ops_schema_yaml_path="/home/pe/project/executorch/cmake-out/configurations/merged.yaml"
+-- Generating kernel bindings:
+--   LIB_NAME: optimized_native_cpu_ops_lib
+--   FUNCTIONS_YAML: /home/pe/project/executorch/cmake-out/configurations/merged.yaml
+--   CUSTOM_OPS_YAML: 
+--   ADD_EXCEPTION_BOUNDARY: TRUE
+--   DTYPE_SELECTIVE_BUILD: 
+Generated files /home/pe/project/executorch/cmake-out/configurations/optimized_native_cpu_ops_lib/RegisterCodegenUnboxedKernelsEverything.cpp;/home/pe/project/executorch/cmake-out/configurations/optimized_native_cpu_ops_lib/Functions.h;/home/pe/project/executorch/cmake-out/configurations/optimized_native_cpu_ops_lib/NativeFunctions.h
+-- Generating operator lib:
+--   LIB_NAME: optimized_native_cpu_ops_lib
+--   KERNEL_LIBS: optimized_kernels;optimized_portable_kernels
+--   DEPS: executorch_core
+--   DTYPE_SELECTIVE_BUILD: 
+-- Building for XNNPACK_TARGET_PROCESSOR: x86_64
+-- Generating microkernels.cmake
+CMake Deprecation Warning at extension/llm/tokenizers/third-party/sentencepiece/CMakeLists.txt:15 (cmake_minimum_required):
+  Compatibility with CMake < 3.10 will be removed from a future version of
+  CMake.
+
+  Update the VERSION argument <min> value.  Or, use the <min>...<max> syntax
+  to tell CMake that the project requires at least <min> but has been updated
+  to work with policies introduced by <max> or earlier.
+
+
+-- VERSION: 0.2.1
+-- Not Found TCMalloc: TCMALLOC_LIB-NOTFOUND
+-- Could NOT find BZip2 (missing: BZIP2_LIBRARIES BZIP2_INCLUDE_DIR) 
+-- Could NOT find ZLIB (missing: ZLIB_LIBRARY ZLIB_INCLUDE_DIR) 
+-- Could NOT find Readline (missing: READLINE_INCLUDE_DIR READLINE_LIBRARY) 
+-- Could NOT find Editline (missing: EDITLINE_INCLUDE_DIR EDITLINE_LIBRARY) 
+-- 
+-- 
+-- PCRE2-10.46 configuration summary:
+-- 
+--   Install prefix .................... : /home/pe/project/executorch/cmake-out
+--   C compiler ........................ : /usr/bin/cc
+--   C compiler flags .................. :  -mshstk -O3 -DNDEBUG
+-- 
+--   Build type ........................ : Release
+--   Build 8 bit pcre2 library ......... : ON
+--   Build 16 bit pcre2 library ........ : OFF
+--   Build 32 bit pcre2 library ........ : OFF
+--   Include debugging code ............ : IfDebugBuild
+--   Enable JIT compiling support ...... : OFF
+--   Use SELinux allocator in JIT ...... : OFF
+--   Enable Unicode support ............ : ON
+--   Newline char/sequence ............. : LF
+--   \R matches only ANYCRLF ........... : OFF
+--   \C is disabled .................... : OFF
+--   EBCDIC coding ..................... : OFF
+--   EBCDIC code for NL ................ : n/a
+--   EBCDIC coding ignoring compiler ... : OFF
+--   Rebuild char tables ............... : OFF
+--   Internal link size ................ : 2
+--   Maximum variable lookbehind ....... : 255
+--   Nested parentheses limit .......... : 250
+--   Heap limit ........................ : 20000000
+--   Match limit ....................... : 10000000
+--   Match depth limit ................. : MATCH_LIMIT
+--   Build shared libs ................. : OFF
+--       with symbol versioning ........ : ON
+--   Build static libs ................. : ON
+--       with PIC enabled .............. : ON
+--   Build pcre2grep ................... : OFF
+--   Enable JIT in pcre2grep ........... : ON
+--   Enable callouts in pcre2grep ...... : ON
+--   Enable callout fork in pcre2grep .. : ON
+--   Initial buffer size for pcre2grep . : 20480
+--   Maximum buffer size for pcre2grep . : 1048576
+--   Build tests (implies pcre2test .... : OFF
+--                and pcre2grep)
+--   Link pcre2grep with libz .......... : Library not found
+--   Link pcre2grep with libbz2 ........ : Library not found
+--   Link pcre2test with libeditline ... : Library not found
+--   Link pcre2test with libreadline ... : Library not found
+--   Enable Valgrind support ........... : OFF
+--   Use %zu and %td ................... : AUTO
+-- 
+CMake Warning (dev) at extension/llm/tokenizers/CMakeLists.txt:204 (install):
+  Target re2 has PUBLIC_HEADER files but no PUBLIC_HEADER DESTINATION.
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+'python' '-c' 'import importlib.util; print(importlib.util.find_spec('torch').submodule_search_locations[0])'
+-- Generating selected operator lib:
+--   LIB_NAME: quantized_ops_lib
+--   OPS_SCHEMA_YAML: /home/pe/project/executorch/kernels/quantized/quantized.yaml
+--   ROOT_OPS: 
+--   INCLUDE_ALL_OPS: 
+--   OPS_FROM_MODEL: 
+--   DTYPE_SELECTIVE_BUILD: 
+Command - python;-m;codegen.tools.gen_oplist;--output_path=/home/pe/project/executorch/cmake-out/kernels/quantized/quantized_ops_lib/selected_operators.yaml;--ops_schema_yaml_path="/home/pe/project/executorch/kernels/quantized/quantized.yaml"
+-- Generating kernel bindings:
+--   LIB_NAME: quantized_ops_lib
+--   FUNCTIONS_YAML: 
+--   CUSTOM_OPS_YAML: /home/pe/project/executorch/kernels/quantized/quantized.yaml
+--   ADD_EXCEPTION_BOUNDARY: FALSE
+--   DTYPE_SELECTIVE_BUILD: 
+Generated files /home/pe/project/executorch/cmake-out/kernels/quantized/quantized_ops_lib/RegisterCodegenUnboxedKernelsEverything.cpp;/home/pe/project/executorch/cmake-out/kernels/quantized/quantized_ops_lib/Functions.h;/home/pe/project/executorch/cmake-out/kernels/quantized/quantized_ops_lib/NativeFunctions.h;/home/pe/project/executorch/cmake-out/kernels/quantized/quantized_ops_lib/RegisterCPUCustomOps.cpp;/home/pe/project/executorch/cmake-out/kernels/quantized/quantized_ops_lib/RegisterSchema.cpp;/home/pe/project/executorch/cmake-out/kernels/quantized/quantized_ops_lib/CustomOpsNativeFunctions.h
+-- Generating operator lib:
+--   LIB_NAME: quantized_ops_lib
+--   KERNEL_LIBS: quantized_kernels
+--   DEPS: executorch_core
+--   DTYPE_SELECTIVE_BUILD: 
+CMake Warning (dev) at backends/vulkan/CMakeLists.txt:115 (find_package):
+  Policy CMP0167 is not set: The FindBoost module is removed.  Run "cmake
+  --help-policy CMP0167" for policy details.  Use the cmake_policy command to
+  set the policy and suppress this warning.
+
+This warning is for project developers.  Use -Wno-dev to suppress it.
+
+-- Could NOT find Boost (missing: Boost_INCLUDE_DIR stacktrace_basic stacktrace_addr2line) (Required is at least version "1.89")
+-- --- Configured Options ---
+
+-- BUILD_TESTING                               : OFF
+-- CCACHE_PROGRAM                              : CCACHE_PROGRAM-NOTFOUND
+-- CMAKE_BUILD_TYPE                            : Release
+-- CMAKE_CXX_COMPILER_ID                       : GNU
+-- CMAKE_CXX_STANDARD                          : 17
+-- CMAKE_SYSTEM_PROCESSOR                      : x86_64
+-- CMAKE_TOOLCHAIN_FILE                        x (unset)
+-- EXECUTORCH_BUILD_ARM_BAREMETAL              : OFF
+-- EXECUTORCH_BUILD_CADENCE                    : OFF
+-- EXECUTORCH_BUILD_COREML                     : OFF
+-- EXECUTORCH_BUILD_CORTEX_M                   : OFF
+-- EXECUTORCH_BUILD_CPUINFO                    : ON
+-- EXECUTORCH_BUILD_CUDA                       : OFF
+-- EXECUTORCH_BUILD_DEVTOOLS                   : OFF
+-- EXECUTORCH_BUILD_EXECUTOR_RUNNER            : OFF
+-- EXECUTORCH_BUILD_EXTENSION_APPLE            : OFF
+-- EXECUTORCH_BUILD_EXTENSION_ASR_RUNNER       : ON
+-- EXECUTORCH_BUILD_EXTENSION_DATA_LOADER      : ON
+-- EXECUTORCH_BUILD_EXTENSION_EVALUE_UTIL      : OFF
+-- EXECUTORCH_BUILD_EXTENSION_FLAT_TENSOR      : ON
+-- EXECUTORCH_BUILD_EXTENSION_LLM              : ON
+-- EXECUTORCH_BUILD_EXTENSION_LLM_APPLE        : OFF
+-- EXECUTORCH_BUILD_EXTENSION_LLM_RUNNER       : ON
+-- EXECUTORCH_BUILD_EXTENSION_MODULE           : ON
+-- EXECUTORCH_BUILD_EXTENSION_NAMED_DATA_MAP   : ON
+-- EXECUTORCH_BUILD_EXTENSION_RUNNER_UTIL      : OFF
+-- EXECUTORCH_BUILD_EXTENSION_TENSOR           : ON
+-- EXECUTORCH_BUILD_EXTENSION_TRAINING         : OFF
+-- EXECUTORCH_BUILD_KERNELS_LLM                : ON
+-- EXECUTORCH_BUILD_KERNELS_LLM_AOT            : OFF
+-- EXECUTORCH_BUILD_KERNELS_OPTIMIZED          : ON
+-- EXECUTORCH_BUILD_KERNELS_QUANTIZED          : ON
+-- EXECUTORCH_BUILD_KERNELS_QUANTIZED_AOT      : OFF
+-- EXECUTORCH_BUILD_METAL                      : OFF
+-- EXECUTORCH_BUILD_MPS                        : OFF
+-- EXECUTORCH_BUILD_NEURON                     : OFF
+-- EXECUTORCH_BUILD_OPENVINO                   : OFF
+-- EXECUTORCH_BUILD_PORTABLE_OPS               : ON
+-- EXECUTORCH_BUILD_PRESET_FILE                : /home/pe/project/executorch/tools/cmake/preset/llm.cmake
+-- EXECUTORCH_BUILD_PTHREADPOOL                : ON
+-- EXECUTORCH_BUILD_PYBIND                     : OFF
+-- EXECUTORCH_BUILD_QNN                        : OFF
+-- EXECUTORCH_BUILD_SIZE_TEST                  : OFF
+-- EXECUTORCH_BUILD_TESTS                      : OFF
+-- EXECUTORCH_BUILD_TOKENIZERS_WASM            : OFF
+-- EXECUTORCH_BUILD_VGF                        : OFF
+-- EXECUTORCH_BUILD_VULKAN                     : ON
+-- EXECUTORCH_BUILD_WASM                       : OFF
+-- EXECUTORCH_BUILD_WHEEL_DO_NOT_USE           : FALSE
+-- EXECUTORCH_BUILD_XNNPACK                    : ON
+-- EXECUTORCH_CADENCE_CPU_RUNNER               : OFF
+-- EXECUTORCH_COREML_BUILD_EXECUTOR_RUNNER     : OFF
+-- EXECUTORCH_ENABLE_BUNDLE_IO                 : OFF
+-- EXECUTORCH_ENABLE_DTYPE_SELECTIVE_BUILD     : FALSE
+-- EXECUTORCH_ENABLE_EVENT_TRACER              : OFF
+-- EXECUTORCH_ENABLE_LOGGING                   : OFF
+-- EXECUTORCH_ENABLE_PROGRAM_VERIFICATION      : OFF
+-- EXECUTORCH_FLATBUFFERS_MAX_ALIGNMENT        : 1024
+-- EXECUTORCH_LOG_LEVEL                        : Info
+-- EXECUTORCH_NNLIB_OPT                        : OFF
+-- EXECUTORCH_OPTIMIZE_SIZE                    : OFF
+-- EXECUTORCH_PAL_DEFAULT                      : posix
+-- EXECUTORCH_PAL_DEFAULT_FILE_PATH            : /home/pe/project/executorch/runtime/platform/default/posix.cpp
+-- EXECUTORCH_SELECT_OPS_LIST                  : 
+-- EXECUTORCH_SELECT_OPS_MODEL                 : 
+-- EXECUTORCH_SELECT_OPS_YAML                  : 
+-- EXECUTORCH_THREADPOOL_USE_ALL_LOGICAL_CORES : OFF
+-- EXECUTORCH_THREADPOOL_USE_PERFORMANCE_CORES : OFF
+-- EXECUTORCH_USE_CPP_CODE_COVERAGE            : OFF
+-- EXECUTORCH_USE_DL                           : ON
+-- EXECUTORCH_XNNPACK_ENABLE_KLEIDI            : ON
+-- EXECUTORCH_XNNPACK_ENABLE_WEIGHT_CACHE      : OFF
+-- EXECUTORCH_XNNPACK_SHARED_WORKSPACE         : ON
+-- PYTHON_EXECUTABLE                           : python
+-- --------------------------
+-- Configuring done (1.6s)
+-- Generating done (0.2s)
+-- Build files have been written to: /home/pe/project/executorch/cmake-out
+
+Executing workflow step 2 of 2: build preset "llm-release-vulkan-install"
+
+gmake[1]: Entering directory '/home/pe/project/executorch/cmake-out'
+[  0%] Performing build step for 'flatcc_ep'
+[  1%] Built target flatbuffers_ep
+[  1%] Built target spinlock_wait
+[  1%] Built target strerror
+[  2%] Built target pthreadpool
+[  2%] Built target xnnpack-sanitizers
+[  2%] Built target log_severity
+[  2%] Built target random_internal_platform
+[  2%] Built target leak_check
+[  2%] Built target utf8_for_code_point
+[  2%] Built target exponential_biased
+[  3%] Built target gflags_nothreads_static
+[  3%] Built target log_internal_nullguard
+[  3%] Built target int128
+[  3%] Built target flags_commandlineflag_internal
+[  4%] Built target civil_time
+[  4%] Built target random_seed_gen_exception
+[  5%] Built target cpuinfo
+[  5%] Built target dumb_fht
+[  6%] Built target cpuinfo_internals
+[  7%] Built target eigen_blas
+[  7%] Built target time_zone
+[  9%] Built target pcre2-8-static
+[ 10%] Generating xnnpack_schema headers
+[ 10%] Generating common_schema headers
+[ 11%] Generating scalar_type_schema headers
+[ 11%] Generating vulkan_schema headers
+[ 11%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-logging.dir/src/enums/allocation-type.c.o
+[ 11%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-normalization.dir/src/normalization.c.o
+[ 11%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-logging.dir/src/enums/microkernel-type.c.o
+[ 11%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-logging.dir/src/enums/datatype-strings.c.o
+[ 11%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-logging.dir/src/enums/node-type.c.o
+[ 11%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microparams-init.dir/src/microparams-init.c.o
+[ 11%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-logging.dir/src/enums/operator-type.c.o
+[ 11%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-indirection.dir/src/indirection.c.o
+[ 11%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-logging.dir/src/log.c.o
+[ 11%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-datatype.dir/src/datatype.c.o
+[ 11%] Built target periodic_sampler
+[ 11%] Built target raw_logging_internal
+[ 11%] Built target random_internal_randen_slow
+[ 11%] Built target random_internal_randen_hwaes_impl
+[ 11%] Built target decode_rust_punycode
+[ 11%] Built target common_schema
+[ 11%] Built target scalar_type_schema
+[ 11%] Building C object extension/llm/tokenizers/third-party/pcre2/CMakeFiles/pcre2-posix-static.dir/src/pcre2posix.c.o
+[ 11%] Built target vulkan_schema
+[ 11%] Building CXX object extension/llm/tokenizers/CMakeFiles/regex_lookahead.dir/src/pcre2_regex.cpp.o
+[ 11%] Building CXX object extension/llm/tokenizers/CMakeFiles/regex_lookahead.dir/src/std_regex.cpp.o
+[ 11%] Building CXX object extension/llm/tokenizers/CMakeFiles/regex_lookahead.dir/src/regex_lookahead.cpp.o
+[  3%] Building C object src/runtime/CMakeFiles/flatccrt.dir/json_printer.c.o
+[  6%] Linking C static library /home/pe/project/executorch/third-party/flatcc/lib/libflatcc.a
+[ 11%] Generating program_schema headers
+[ 11%] Built target xnnpack_schema
+[ 11%] Generating flat_tensor_schema headers
+[ 11%] Built target bad_optional_access
+[ 11%] Built target debugging_internal
+[ 11%] Built target bad_any_cast_impl
+[ 11%] Built target base
+[ 11%] Built target throw_delegate
+[ 11%] Built target scoped_set_env
+[ 11%] Built target bad_variant_access
+[ 11%] Built target demangle_rust
+[ 11%] Built target cordz_functions
+[ 12%] Built target random_internal_randen_hwaes
+[ 12%] Building CXX object extension/llm/tokenizers/sp-build/src/CMakeFiles/sentencepiece-static.dir/sentencepiece_processor.cc.o
+[ 12%] Built target xnnpack-logging
+[ 12%] Built target flat_tensor_schema
+In file included from /home/pe/project/executorch/third-party/flatcc/include/flatcc/portable/pprintfp.h:17,
+                 from /home/pe/project/executorch/third-party/flatcc/src/runtime/json_printer.c:26:
+/home/pe/project/executorch/third-party/flatcc/include/flatcc/portable/grisu3_print.h: In function ‘grisu3_print_nan’:
+/home/pe/project/executorch/third-party/flatcc/include/flatcc/portable/grisu3_print.h:186:33: error: initializer-string for array of ‘char’ truncates NUL terminator but destination lacks ‘nonstring’ attribute (17 chars into 16 available) [-Werror=unterminated-string-initialization]
+  186 |     static char hexdigits[16] = "0123456789ABCDEF";
+      |                                 ^~~~~~~~~~~~~~~~~~
+[ 12%] Building CXX object extension/llm/tokenizers/third-party/abseil-cpp/absl/debugging/CMakeFiles/stacktrace.dir/stacktrace.cc.o
+[ 12%] Building CXX object extension/llm/tokenizers/third-party/abseil-cpp/absl/hash/CMakeFiles/city.dir/internal/city.cc.o
+[ 12%] Building CXX object extension/llm/tokenizers/third-party/abseil-cpp/absl/crc/CMakeFiles/crc_cpu_detect.dir/internal/cpu_detect.cc.o
+[ 12%] Building CXX object extension/llm/tokenizers/third-party/abseil-cpp/absl/strings/CMakeFiles/strings_internal.dir/internal/escaping.cc.o
+[ 12%] Building CXX object extension/llm/tokenizers/third-party/abseil-cpp/absl/strings/CMakeFiles/strings_internal.dir/internal/utf8.cc.o
+[ 12%] Building CXX object extension/llm/tokenizers/third-party/abseil-cpp/absl/log/CMakeFiles/log_internal_conditions.dir/internal/conditions.cc.o
+[ 12%] Building CXX object extension/llm/tokenizers/third-party/abseil-cpp/absl/strings/CMakeFiles/string_view.dir/string_view.cc.o
+[ 13%] Building CXX object extension/llm/tokenizers/third-party/abseil-cpp/absl/hash/CMakeFiles/low_level_hash.dir/internal/low_level_hash.cc.o
+[ 13%] Building CXX object extension/llm/tokenizers/third-party/abseil-cpp/absl/base/CMakeFiles/malloc_internal.dir/internal/low_level_alloc.cc.o
+[ 13%] Built target program_schema
+[ 13%] Building CXX object extension/llm/tokenizers/third-party/abseil-cpp/absl/base/CMakeFiles/tracing_internal.dir/internal/tracing.cc.o
+[ 13%] Building CXX object extension/llm/tokenizers/third-party/abseil-cpp/absl/strings/CMakeFiles/strings_internal.dir/internal/ostringstream.cc.o
+[ 13%] Built target random_internal_randen
+[ 13%] Building CXX object extension/llm/tokenizers/third-party/abseil-cpp/absl/debugging/CMakeFiles/demangle_internal.dir/internal/demangle.cc.o
+[ 13%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-hardware-config.dir/src/configs/hardware-config.c.o
+[ 13%] Building CXX object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-pack-lh.dir/src/pack-lh.cc.o
+[ 13%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-mutex.dir/src/mutex.c.o
+[ 13%] Building ASM object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/bf16-f32-gemm/gen/bf16-f32-gemm-1x32c2-minmax-asm-amd64-avx512bf16-broadcast.S.o
+[ 13%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-memory.dir/src/memory.c.o
+[ 13%] Building ASM object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/bf16-f32-gemm/gen/bf16-f32-gemm-11x32c2-minmax-asm-amd64-avx512bf16-broadcast.S.o
+[ 13%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-cache.dir/src/cache.c.o
+[ 75%] Built target flatcc
+[ 13%] Built target xnnpack-datatype
+[ 13%] Building CXX object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-packing.dir/src/reference/packing.cc.o
+[ 13%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-dwconv/gen/f16-dwconv-25p8c-minmax-fma3-acc2.c.o
+[ 13%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-dwconv/gen/f16-dwconv-3p16c-minmax-fma3.c.o
+[ 13%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-avgpool/gen/f16-avgpool-9p-minmax-f16c.c.o
+[ 14%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-dwconv/gen/f16-dwconv-9p16c-minmax-fma3.c.o
+[ 14%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-operator-utils.dir/src/operator-utils.c.o
+[ 14%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-dwconv/gen/f16-dwconv-4p16c-minmax-fma3.c.o
+[ 14%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-operator-run.dir/src/operator-run.c.o
+[ 14%] Building CXX object CMakeFiles/executorch_core.dir/runtime/backend/interface.cpp.o
+[ 14%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-allocator.dir/src/allocator.c.o
+[ 14%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-f32-vcvt/gen/f16-f32-vcvt-avx-int16-u16.c.o
+[ 14%] Building CXX object CMakeFiles/executorch_core.dir/runtime/core/evalue.cpp.o
+[ 14%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-f32-vcvt/gen/f16-f32-vcvt-f16c-u16.c.o
+[ 14%] Building CXX object CMakeFiles/executorch_core.dir/runtime/core/portable_type/tensor_impl.cpp.o
+[ 14%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-f32-vcvt/gen/f16-f32-vcvt-avx512skx-u16.c.o
+[ 14%] Building CXX object CMakeFiles/executorch_core.dir/runtime/core/exec_aten/util/tensor_shape_to_c_string.cpp.o
+[ 14%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-f32-vcvt/gen/f16-f32-vcvt-scalar-u4.c.o
+[ 14%] Building CXX object CMakeFiles/executorch_core.dir/runtime/core/tensor_layout.cpp.o
+[ 78%] Linking C executable /home/pe/project/executorch/third-party/flatcc/bin/flatcc
+[ 14%] Building CXX object CMakeFiles/executorch_core.dir/runtime/core/exec_aten/util/tensor_util_portable.cpp.o
+[ 14%] Building CXX object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-reference-ukernels.dir/src/reference/binary-elementwise.cc.o
+[ 14%] Building CXX object CMakeFiles/executorch_core.dir/runtime/executor/method.cpp.o
+[ 14%] Building CXX object CMakeFiles/executorch_core.dir/runtime/core/tag.cpp.o
+[ 14%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-f32-vcvt/gen/f16-f32-vcvt-sse41-int16-u16.c.o
+[ 14%] Linking CXX static library libabsl_tracing_internal.a
+[ 14%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-f32-vcvt/gen/f16-f32-vcvt-sse2-int16-u32.c.o
+[ 14%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-f32acc-igemm/gen/f16-f32acc-igemm-1x16-minmax-avx2-broadcast.c.o
+[ 14%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-f32acc-gemm/gen/f16-f32acc-gemm-4x16-minmax-avx2-broadcast.c.o
+[ 14%] Building CXX object CMakeFiles/executorch_core.dir/runtime/executor/method_meta.cpp.o
+[ 14%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-f32acc-gemm/gen/f16-f32acc-gemm-1x16-minmax-avx2-broadcast.c.o
+[ 14%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-maxpool/gen/f16-maxpool-9p-minmax-avx2-u16.c.o
+[ 14%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-f32acc-rdsum/gen/f16-f32acc-rdsum-7p7x-avx512skx-u64.c.o
+[ 14%] Building CXX object CMakeFiles/executorch_core.dir/runtime/executor/tensor_parser_exec_aten.cpp.o
+[ 14%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-f32acc-igemm/gen/f16-f32acc-igemm-4x16-minmax-avx2-broadcast.c.o
+[ 14%] Building CXX object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-reference-ukernels.dir/src/reference/unary-elementwise.cc.o
+[ 14%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-f32acc-rsum/gen/f16-f32acc-rsum-f16c-u32-acc4.c.o
+[ 14%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-f32acc-rdsum/gen/f16-f32acc-rdsum-7p7x-f16c-u32.c.o
+[ 14%] Building CXX object CMakeFiles/executorch_core.dir/runtime/executor/program.cpp.o
+[ 14%] Building CXX object CMakeFiles/executorch_core.dir/runtime/kernel/operator_registry.cpp.o
+[ 14%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-maxpool/gen/f16-maxpool-9p-minmax-sse41-u8.c.o
+[ 14%] Built target xnnpack-mutex
+[ 14%] Building CXX object CMakeFiles/executorch_core.dir/runtime/executor/tensor_parser_portable.cpp.o
+[ 14%] Building CXX object CMakeFiles/executorch_core.dir/runtime/executor/pte_data_map.cpp.o
+[ 14%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-qs8-vcvt/gen/f16-qs8-vcvt-scalar-imagic-u4.c.o
+[ 14%] Building CXX object CMakeFiles/executorch_core.dir/runtime/platform/abort.cpp.o
+[ 14%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-f32acc-rsum/gen/f16-f32acc-rsum-avx512skx-u32-acc2.c.o
+[ 14%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-ibilinear/gen/f16-ibilinear-fma3-u8.c.o
+[ 14%] Building CXX object CMakeFiles/executorch_core.dir/runtime/platform/log.cpp.o
+[ 14%] Building CXX object CMakeFiles/executorch_core.dir/runtime/platform/platform.cpp.o
+[ 14%] Building CXX object CMakeFiles/executorch_core.dir/runtime/platform/profiler.cpp.o
+[ 14%] Built target xnnpack-memory
+[ 14%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-qu8-vcvt/gen/f16-qu8-vcvt-scalar-imagic-u4.c.o
+[ 14%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-raddstoreexpminusmax/gen/f16-raddstoreexpminusmax-avx2-rr1-p2-u32.c.o
+[ 14%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-rdminmax/gen/f16-rdmin-2p2x-scalar-c2.c.o
+[ 14%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-rminmax/f16-rmax-f16c-u32.c.o
+[ 14%] Linking C static library libpcre2-posix.a
+[ 15%] Building CXX object CMakeFiles/executorch_core.dir/runtime/platform/runtime.cpp.o
+[ 15%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-rminmax/gen/f16-rmax-avx512fp16-u128-acc4.c.o
+[ 15%] Built target xnnpack-normalization
+[ 16%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-rdminmax/gen/f16-rdmax-2p2x-scalar-c2.c.o
+[ 15%] Building CXX object CMakeFiles/executorch_core.dir/schema/extended_header.cpp.o
+[ 16%] Building CXX object CMakeFiles/executorch_core.dir/runtime/platform/default/posix.cpp.o
+[ 81%] Built target flatcc_cli
+[ 16%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-rminmax/gen/f16-rminmax-avx512fp16-u128-acc4.c.o
+[ 16%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-rminmax/gen/f16-rmax-avx512skx-u64-acc4.c.o
+[ 16%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-rminmax/gen/f16-rmax-scalar-u2-acc2.c.o
+[ 16%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-rminmax/gen/f16-rmin-avx512skx-u64-acc4.c.o
+[ 16%] Built target xnnpack-allocator
+[ 16%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-rminmax/gen/f16-rmin-avx512fp16-u128-acc4.c.o
+[ 16%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-rminmax/gen/f16-rmin-scalar-u2-acc2.c.o
+[ 16%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-rminmax/gen/f16-rminmax-avx512skx-u64-acc4.c.o
+[ 16%] Built target tracing_internal
+[ 16%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-rminmax/gen/f16-rminmax-scalar-u2-acc2.c.o
+[ 16%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vadd-avx512fp16-u64.c.o
+[ 16%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vapproxgelu/gen/f16-vapproxgelu-scalar-rational-6-4-div.c.o
+[ 16%] Built target xnnpack-hardware-config
+[ 16%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vdivc-f16c-u8.c.o
+[ 16%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vdiv-f16c-u8.c.o
+[ 16%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vaddc-f16c-u16.c.o
+[ 16%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vmax-avx512fp16-u64.c.o
+[ 16%] Built target pcre2-posix-static
+[ 17%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vmax-f16c-u16.c.o
+[ 17%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vdivc-avx512fp16-u64.c.o
+[ 16%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vaddc-avx512fp16-u64.c.o
+[ 17%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vmaxc-avx512fp16-u64.c.o
+[ 16%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vdiv-avx512fp16-u64.c.o
+[ 17%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vadd-f16c-u16.c.o
+[ 17%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vmin-avx512fp16-u64.c.o
+[ 17%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vmaxc-f16c-u16.c.o
+[ 17%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernel-utils.dir/src/microkernel-utils.c.o
+[ 17%] Linking CXX static library libabsl_log_internal_conditions.a
+[ 17%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vprelu-avx512fp16-u64.c.o
+[ 17%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vminc-avx512fp16-u64.c.o
+[ 17%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vmul-f16c-u16.c.o
+[ 17%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vmulc-f16c-u16.c.o
+[ 17%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vpreluc-f16c-u16.c.o
+[ 17%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vmul-avx512fp16-u64.c.o
+[ 17%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vpreluc-avx512fp16-u64.c.o
+[ 17%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vprelu-f16c-u16.c.o
+[ 17%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vminc-f16c-u16.c.o
+[ 17%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vmin-f16c-u16.c.o
+[ 17%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vmulc-avx512fp16-u64.c.o
+[ 17%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vrpreluc-avx512fp16-u64.c.o
+[ 17%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vrpreluc-f16c-u16.c.o
+[ 17%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vrdivc-avx512fp16-u64.c.o
+[ 17%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vrdivc-f16c-u8.c.o
+[ 17%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vsqrdiff-f16c-u16.c.o
+[ 17%] Built target xnnpack-operator-utils
+[ 17%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vrsubc-avx512fp16-u64.c.o
+[ 18%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vsqrdiff-avx512fp16-u64.c.o
+[ 17%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vsqrdiffc-avx512fp16-u64.c.o
+[ 18%] Built target xnnpack-cache
+[ 17%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vrsubc-f16c-u16.c.o
+[ 17%] Linking CXX static library libabsl_crc_cpu_detect.a
+[ 18%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vcos/gen/f16-vcos-scalar-rational-3-2-div.c.o
+[ 18%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vhswish/gen/f16-vhswish-f16c-u16.c.o
+[ 18%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-velu/gen/f16-velu-avx2-rr1-p3-u16.c.o
+[ 18%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vsqrdiffc-f16c-u16.c.o
+[ 18%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vsub-f16c-u16.c.o
+[ 18%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vsub-avx512fp16-u64.c.o
+[ 18%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vsubc-f16c-u16.c.o
+[ 18%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vbinary/gen/f16-vsubc-avx512fp16-u64.c.o
+[ 18%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vclamp/gen/f16-vclamp-f16c-u16.c.o
+[ 18%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vrsqrt/gen/f16-vrsqrt-f16c-rsqrt-u32.c.o
+[ 18%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vexp/gen/f16-vexp-scalar-poly-3.c.o
+[ 18%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-conv-hwc2chw/f32-conv-hwc2chw-3x3s2p1c3x4-sse-2x2.c.o
+[ 18%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vgelu/gen/f16-vgelu-scalar-rational-6-4-div.c.o
+[ 18%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-avgpool/gen/f32-avgpool-9p-minmax-avx-u8.c.o
+[ 18%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv/gen/f32-dwconv-25p16c-minmax-fma3.c.o
+[ 18%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv/gen/f32-dwconv-25p1c-minmax-scalar-acc2.c.o
+[ 18%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv/gen/f32-dwconv-3p16c-minmax-avx.c.o
+[ 19%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv/gen/f32-dwconv-25p1c-scalar-acc2.c.o
+[ 19%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv/gen/f32-dwconv-3p8c-minmax-sse.c.o
+[ 19%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv/gen/f32-dwconv-25p2c-minmax-scalar-acc2.c.o
+[ 18%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vrnd/gen/f16-vrndd-f16c-u16.c.o
+[ 19%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv/gen/f32-dwconv-3p1c-minmax-scalar-acc2.c.o
+[ 19%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv/gen/f32-dwconv-25p2c-scalar-acc2.c.o
+[ 19%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv/gen/f32-dwconv-25p8c-minmax-sse.c.o
+[ 19%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv/gen/f32-dwconv-4p16c-minmax-avx.c.o
+[ 19%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv/gen/f32-dwconv-3p16c-minmax-avx512f.c.o
+[ 18%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vrnd/gen/f16-vrndz-f16c-u16.c.o
+[ 19%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv/gen/f32-dwconv-3p1c-scalar-acc2.c.o
+[ 18%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vrnd/gen/f16-vrndu-f16c-u16.c.o
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv/gen/f32-dwconv-3p16c-minmax-fma3.c.o
+[ 18%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-avgpool/gen/f32-avgpool-9p-minmax-sse2-u4.c.o
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv/gen/f32-dwconv-4p16c-minmax-avx512f.c.o
+cc1: all warnings being treated as errors
+[ 18%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-avgpool/gen/f32-avgpool-9p-minmax-scalar-u1.c.o
+[ 18%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv/gen/f32-dwconv-25p16c-minmax-avx.c.o
+[ 18%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv/gen/f32-dwconv-25p16c-minmax-avx512f.c.o
+[ 18%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-conv-hwc2chw/f32-conv-hwc2chw-3x3s2p1c3x4-scalar-1x1.c.o
+[ 18%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-avgpool/gen/f32-avgpool-9p-minmax-avx512f-u16.c.o
+[ 20%] Built target log_internal_conditions
+gmake[6]: *** [src/runtime/CMakeFiles/flatccrt.dir/build.make:149: src/runtime/CMakeFiles/flatccrt.dir/json_printer.c.o] Error 1
+gmake[5]: *** [CMakeFiles/Makefile2:152: src/runtime/CMakeFiles/flatccrt.dir/all] Error 2
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vsin/gen/f16-vsin-scalar-rational-3-2-div.c.o
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vsigmoid/gen/f16-vsigmoid-avx2-rr1-p2-rcp-u32.c.o
+gmake[4]: *** [Makefile:136: all] Error 2
+[ 20%] Built target crc_cpu_detect
+gmake[3]: *** [third-party/CMakeFiles/flatcc_ep.dir/build.make:86: third-party/flatcc_ep/src/flatcc_ep-stamp/flatcc_ep-build] Error 2
+gmake[2]: *** [CMakeFiles/Makefile2:1827: third-party/CMakeFiles/flatcc_ep.dir/all] Error 2
+gmake[2]: *** Waiting for unfinished jobs....
+[ 20%] Built target xnnpack-microparams-init
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vrnd/gen/f16-vrndne-f16c-u16.c.o
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vmulcaddc/gen/f16-vmulcaddc-c8-minmax-fma3-2x.c.o
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv/gen/f32-dwconv-4p16c-minmax-fma3.c.o
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vunary/gen/f16-vabs-sse2-u16.c.o
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vunary/gen/f16-vsqr-f16c-u16.c.o
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv/gen/f32-dwconv-4p1c-scalar-acc2.c.o
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vtanh/gen/f16-vtanh-f16c-expm1minus-rr1-p3h2ts-rcp-u24.c.o
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv/gen/f32-dwconv-4p1c-minmax-scalar-acc2.c.o
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv/gen/f32-dwconv-9p16c-minmax-avx.c.o
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vsqrt/gen/f16-vsqrt-f16c-rsqrt-u32.c.o
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv/gen/f32-dwconv-4p8c-minmax-sse.c.o
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-argmaxpool/f32-argmaxpool-9p8x-scalar-c1.c.o
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vtanh/gen/f16-vtanh-fma3-polynomial-p19h9t2-u32.c.o
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv/gen/f32-dwconv-9p1c-scalar-acc2.c.o
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv/gen/f32-dwconv-9p16c-minmax-fma3.c.o
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv/gen/f32-dwconv-9p16c-minmax-avx512f.c.o
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-argmaxpool/f32-argmaxpool-9p8x-sse2-c4.c.o
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-f16-vcvt/gen/f32-f16-vcvt-scalar-fabsf-u2.c.o
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vlrelu/gen/f16-vlrelu-f16c-u16.c.o
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f16-vunary/gen/f16-vneg-sse2-u16.c.o
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv/gen/f32-dwconv-9p8c-minmax-sse.c.o
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-f16-vcvt/gen/f32-f16-vcvt-avx512skx-u16.c.o
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-f16-vcvt/gen/f32-f16-vcvt-sse41-u8.c.o
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv2d-chw/gen/f32-dwconv2d-chw-3x3p1-minmax-scalar-2x1-acc2.c.o
+[ 21%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv2d-chw/gen/f32-dwconv2d-chw-5x5p2-minmax-scalar-2x1-acc2.c.o
+[ 21%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv2d-chw/gen/f32-dwconv2d-chw-3x3p1-minmax-sse-2x4-acc2.c.o
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv/gen/f32-dwconv-9p1c-minmax-scalar-acc2.c.o
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-f16-vcvt/gen/f32-f16-vcvt-f16c-u16.c.o
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv2d-chw/gen/f32-dwconv2d-chw-5x5s2p2-minmax-sse-2x4.c.o
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv2d-chw/gen/f32-dwconv2d-chw-3x3s2p1-minmax-scalar-1x1-acc2.c.o
+[ 21%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv2d-chw/gen/f32-dwconv2d-chw-5x5p2-minmax-sse-4x4.c.o
+[ 20%] Building ASM object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-gemm/gen/f32-gemm-10x16c2-minmax-asm-amd64-avx512f-broadcast.S.o
+[ 21%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv2d-chw/gen/f32-dwconv2d-chw-5x5s2p2-minmax-scalar-1x1-acc5.c.o
+[ 21%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-f16-vcvt/gen/f32-f16-vcvt-avx-u24.c.o
+[ 22%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv2d-chw/gen/f32-dwconv2d-chw-3x3p1-minmax-scalar-4x1.c.o
+[ 22%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-gemm/gen/f32-gemm-1x16-minmax-fma3-broadcast.c.o
+[ 22%] Building ASM object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-gemm/gen/f32-gemm-1x16c2-minmax-asm-amd64-avx512f-broadcast.S.o
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv2d-chw/gen/f32-dwconv2d-chw-3x3s2p1-minmax-scalar-2x1-acc2.c.o
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv2d-chw/gen/f32-dwconv2d-chw-3x3s2p1-minmax-sse-1x4-acc3.c.o
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-f16-vcvt/gen/f32-f16-vcvt-sse2-u16.c.o
+[ 20%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-gemm/gen/f32-gemm-10x8-minmax-fma3-broadcast.c.o
+[ 21%] Linking CXX static library libabsl_string_view.a
+[ 23%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-gemm/gen/f32-gemm-1x16-minmax-avx512f-broadcast.c.o
+[ 23%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-gemm/gen/f32-gemm-1x16-minmax-avx-broadcast.c.o
+[ 23%] Linking CXX static library libabsl_stacktrace.a
+[ 23%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv2d-chw/gen/f32-dwconv2d-chw-3x3p1-minmax-ssse3-2x4-acc2.c.o
+[ 23%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv2d-chw/gen/f32-dwconv2d-chw-5x5s2p2-minmax-scalar-2x1-acc2.c.o
+[ 23%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-dwconv2d-chw/gen/f32-dwconv2d-chw-5x5p2-minmax-scalar-1x1-acc5.c.o
+[ 23%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-gemm/gen/f32-gemm-1x16s4-minmax-fma3-broadcast.c.o
+[ 23%] Built target xnnpack-microkernel-utils
+[ 23%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-gemm/gen/f32-gemm-1x32-minmax-avx512f-broadcast.c.o
+[ 23%] Building ASM object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-gemm/gen/f32-gemm-1x32c2-minmax-asm-amd64-avx512f-broadcast.S.o
+[ 23%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-gemm/gen/f32-gemm-1x4-relu-scalar.c.o
+[ 23%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-gemm/gen/f32-gemm-1x8-minmax-avx-broadcast.c.o
+[ 23%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-gemm/gen/f32-gemm-1x4-minmax-scalar.c.o
+[ 23%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-gemm/gen/f32-gemm-1x4-scalar.c.o
+[ 23%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-gemm/gen/f32-gemm-1x8-minmax-sse-load1.c.o
+[ 23%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-gemm/gen/f32-gemm-1x8-minmax-fma3-broadcast.c.o
+[ 23%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-gemm/gen/f32-gemm-4x2-minmax-scalar.c.o
+[ 23%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-gemm/gen/f32-gemm-4x16s4-minmax-fma3-broadcast.c.o
+[ 23%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-gemm/gen/f32-gemm-2x16-minmax-fma3-broadcast.c.o
+[ 23%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-gemm/gen/f32-gemm-4x2-scalar.c.o
+[ 23%] Built target stacktrace
+[ 23%] Built target string_view
+[ 23%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-gemm/gen/f32-gemm-4x4-relu-scalar.c.o
+[ 23%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-gemm/gen/f32-gemm-4x4-minmax-scalar.c.o
+[ 23%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-gemm/gen/f32-gemm-4x2c4-minmax-sse.c.o
+[ 23%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-gemm/gen/f32-gemm-5x16-minmax-avx-broadcast.c.o
+[ 23%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-gemm/gen/f32-gemm-4x4-scalar.c.o
+[ 24%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-gemm/gen/f32-gemm-5x8-minmax-fma3-broadcast.c.o
+[ 24%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-gemm/gen/f32-gemm-5x8-minmax-avx-broadcast.c.o
+[ 23%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-gemm/gen/f32-gemm-4x8-minmax-fma3-broadcast.c.o
+[ 24%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-gemm/gen/f32-gemm-5x16-minmax-fma3-broadcast.c.o
+[ 23%] Building ASM object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-gemm/gen/f32-gemm-5x32c2-minmax-asm-amd64-avx512f-broadcast.S.o
+[ 24%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-gemm/gen/f32-gemm-7x32-minmax-avx512f-broadcast.c.o
+[ 24%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-gemm/gen/f32-gemm-4x8-minmax-sse-load1.c.o
+[ 24%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-ibilinear-chw/gen/f32-ibilinear-chw-scalar-p4.c.o
+[ 24%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-gemm/gen/f32-gemm-7x16-minmax-avx512f-broadcast.c.o
+[ 24%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-ibilinear-chw/gen/f32-ibilinear-chw-sse-p8.c.o
+[ 24%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-ibilinear/gen/f32-ibilinear-scalar-u2.c.o
+[ 24%] Built target xnnpack-pack-lh
+[ 24%] Linking CXX static library libabsl_city.a
+[ 24%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-igemm/gen/f32-igemm-1x16-minmax-avx-broadcast.c.o
+[ 24%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-ibilinear/gen/f32-ibilinear-sse-u8.c.o
+[ 24%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-igemm/gen/f32-igemm-10x8-minmax-fma3-broadcast.c.o
+[ 24%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-igemm/gen/f32-igemm-1x16-minmax-avx512f-broadcast.c.o
+[ 24%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-igemm/gen/f32-igemm-1x16-minmax-fma3-broadcast.c.o
+[ 24%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-igemm/gen/f32-igemm-1x16s4-minmax-fma3-broadcast.c.o
+[ 24%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-igemm/gen/f32-igemm-1x32-minmax-avx512f-broadcast.c.o
+[ 24%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-igemm/gen/f32-igemm-1x4-minmax-scalar.c.o
+[ 24%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-igemm/gen/f32-igemm-1x8-minmax-avx-broadcast.c.o
+[ 24%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-igemm/gen/f32-igemm-4x16s4-minmax-fma3-broadcast.c.o
+[ 24%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-igemm/gen/f32-igemm-1x8-minmax-sse-load1.c.o
+[ 24%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-igemm/gen/f32-igemm-1x4-relu-scalar.c.o
+[ 24%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-igemm/gen/f32-igemm-4x2-minmax-scalar.c.o
+[ 25%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-igemm/gen/f32-igemm-1x8-minmax-fma3-broadcast.c.o
+[ 24%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-igemm/gen/f32-igemm-1x4-scalar.c.o
+[ 25%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-igemm/gen/f32-igemm-4x2-scalar.c.o
+[ 25%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-igemm/gen/f32-igemm-4x2c4-minmax-sse.c.o
+[ 25%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-igemm/gen/f32-igemm-5x16-minmax-fma3-broadcast-prfm.c.o
+[ 25%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-igemm/gen/f32-igemm-4x8-minmax-fma3-broadcast.c.o
+[ 25%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-igemm/gen/f32-igemm-5x16-minmax-avx-broadcast.c.o
+[ 25%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-igemm/gen/f32-igemm-4x4-scalar.c.o
+[ 25%] Built target city
+[ 25%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-igemm/gen/f32-igemm-5x8-minmax-fma3-broadcast.c.o
+[ 25%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-igemm/gen/f32-igemm-4x4-relu-scalar.c.o
+[ 25%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-igemm/gen/f32-igemm-5x8-minmax-avx-broadcast.c.o
+[ 25%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-igemm/gen/f32-igemm-7x16-minmax-avx512f-broadcast.c.o
+[ 25%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-igemm/gen/f32-igemm-4x4-minmax-scalar.c.o
+[ 25%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-igemm/gen/f32-igemm-7x32-minmax-avx512f-broadcast.c.o
+[ 25%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-igemm/gen/f32-igemm-4x8-minmax-sse-load1.c.o
+[ 25%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qc4w-gemm/gen/f32-qc4w-gemm-1x16-minmax-avx-broadcast.c.o
+[ 25%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-maxpool/gen/f32-maxpool-9p-minmax-scalar-u1.c.o
+[ 25%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-maxpool/gen/f32-maxpool-9p-minmax-sse2-u4.c.o
+[ 25%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qc4w-gemm/gen/f32-qc4w-gemm-1x16-minmax-avx2-broadcast.c.o
+[ 26%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qc4w-gemm/gen/f32-qc4w-gemm-1x8-minmax-sse41-dup.c.o
+[ 26%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qc4w-gemm/gen/f32-qc4w-gemm-1x16-minmax-fma3-broadcast.c.o
+[ 26%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qc4w-gemm/gen/f32-qc4w-gemm-1x4-minmax-scalar.c.o
+[ 26%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qc4w-gemm/gen/f32-qc4w-gemm-3x16-minmax-avx-broadcast.c.o
+[ 26%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qc4w-gemm/gen/f32-qc4w-gemm-4x8-minmax-sse41-dup.c.o
+[ 26%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qc4w-gemm/gen/f32-qc4w-gemm-3x16-minmax-fma3-broadcast.c.o
+[ 26%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qc8w-gemm/gen/f32-qc8w-gemm-1x16-minmax-avx-broadcast.c.o
+[ 26%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qc4w-gemm/gen/f32-qc4w-gemm-3x16-minmax-avx2-broadcast.c.o
+[ 26%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qc8w-gemm/gen/f32-qc4w-gemm-1x32-minmax-avx512skx-broadcast.c.o
+[ 26%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qc8w-gemm/gen/f32-qc8w-gemm-1x32-minmax-avx512skx-broadcast.c.o
+In file included from /home/pe/project/executorch/extension/llm/tokenizers/third-party/sentencepiece/src/sentencepiece_processor.cc:15:
+/home/pe/project/executorch/extension/llm/tokenizers/third-party/sentencepiece/src/sentencepiece_processor.h:168:3: error: ‘uint32_t’ does not name a type
+  168 |   uint32_t id() const;
+      |   ^~~~~~~~
+/home/pe/project/executorch/extension/llm/tokenizers/third-party/sentencepiece/src/sentencepiece_processor.h:24:1: note: ‘uint32_t’ is defined in header ‘<cstdint>’; this is probably fixable by adding ‘#include <cstdint>’
+   23 | #include <vector>
+  +++ |+#include <cstdint>
+   24 | 
+/home/pe/project/executorch/extension/llm/tokenizers/third-party/sentencepiece/src/sentencepiece_processor.h:169:3: error: ‘uint32_t’ does not name a type
+  169 |   uint32_t begin() const;
+      |   ^~~~~~~~
+/home/pe/project/executorch/extension/llm/tokenizers/third-party/sentencepiece/src/sentencepiece_processor.h:169:3: note: ‘uint32_t’ is defined in header ‘<cstdint>’; this is probably fixable by adding ‘#include <cstdint>’
+/home/pe/project/executorch/extension/llm/tokenizers/third-party/sentencepiece/src/sentencepiece_processor.h:170:3: error: ‘uint32_t’ does not name a type
+  170 |   uint32_t end() const;
+      |   ^~~~~~~~
+/home/pe/project/executorch/extension/llm/tokenizers/third-party/sentencepiece/src/sentencepiece_processor.h:170:3: note: ‘uint32_t’ is defined in header ‘<cstdint>’; this is probably fixable by adding ‘#include <cstdint>’
+[ 26%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qc8w-gemm/gen/f32-qc8w-gemm-1x16-minmax-fma3-broadcast.c.o
+[ 26%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qc4w-gemm/gen/f32-qc4w-gemm-4x4-minmax-scalar.c.o
+[ 26%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qc8w-gemm/gen/f32-qc8w-gemm-1x4-minmax-scalar.c.o
+[ 26%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qc8w-gemm/gen/f32-qc4w-gemm-7x32-minmax-avx512skx-broadcast.c.o
+[ 26%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qc8w-gemm/gen/f32-qc8w-gemm-1x16-minmax-avx2-broadcast.c.o
+[ 26%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qc8w-gemm/gen/f32-qc8w-gemm-1x8-minmax-sse41-dup.c.o
+[ 26%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qc8w-gemm/gen/f32-qc8w-gemm-4x4-minmax-scalar.c.o
+[ 26%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qc8w-gemm/gen/f32-qc8w-gemm-5x16-minmax-fma3-broadcast.c.o
+[ 26%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qc8w-gemm/gen/f32-qc8w-gemm-4x8-minmax-sse41-dup.c.o
+[ 26%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qs8-vcvt/gen/f32-qs8-vcvt-avx2-u64.c.o
+[ 26%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qc8w-gemm/gen/f32-qc8w-gemm-5x16-minmax-avx-broadcast.c.o
+[ 26%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qc8w-gemm/gen/f32-qc8w-gemm-5x16-minmax-avx2-broadcast.c.o
+[ 26%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qs8-vcvt/gen/f32-qs8-vcvt-sse2-u32.c.o
+[ 26%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qs8-vcvt/gen/f32-qs8-vcvt-avx-u32.c.o
+[ 26%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qs8-vcvt/gen/f32-qs8-vcvt-scalar-lrintf-u4.c.o
+[ 27%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qc8w-gemm/gen/f32-qc8w-gemm-7x32-minmax-avx512skx-broadcast.c.o
+[ 26%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qs8-vcvt/gen/f32-qs8-vcvt-avx512skx-u128.c.o
+[ 27%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qs8-vcvt/gen/f32-qs8-vcvt-scalar-imagic-u4.c.o
+[ 27%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qs8-vcvt/gen/f32-qs8-vcvt-sse41-u32.c.o
+[ 27%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qu8-vcvt/gen/f32-qu8-vcvt-avx-u32.c.o
+[ 27%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qu8-vcvt/gen/f32-qu8-vcvt-avx512skx-u128.c.o
+[ 27%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qu8-vcvt/gen/f32-qu8-vcvt-avx2-u64.c.o
+[ 27%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qu8-vcvt/gen/f32-qu8-vcvt-scalar-imagic-u4.c.o
+[ 27%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-raddstoreexpminusmax/gen/f32-raddstoreexpminusmax-avx2-rr2-p5-u32-acc2.c.o
+[ 27%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qu8-vcvt/gen/f32-qu8-vcvt-scalar-lrintf-u4.c.o
+[ 27%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-qu8-vcvt/gen/f32-qu8-vcvt-sse2-u32.c.o
+[ 27%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-raddstoreexpminusmax/gen/f32-raddstoreexpminusmax-scalar-rr2-p5-u4-acc2.c.o
+[ 27%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-raddstoreexpminusmax/gen/f32-raddstoreexpminusmax-avx512f-rr2-p5-u64-acc2.c.o
+[ 27%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-raddstoreexpminusmax/gen/f32-raddstoreexpminusmax-avx256skx-rr2-p5-u32-acc2.c.o
+[ 27%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-rdminmax/gen/f32-rdmax-2p2x-avx-c32.c.o
+[ 27%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-raddstoreexpminusmax/gen/f32-raddstoreexpminusmax-sse2-rr2-p5-u16-acc2.c.o
+[ 27%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-rdminmax/gen/f32-rdmax-2p2x-avx512f-c32.c.o
+[ 27%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-rdminmax/gen/f32-rdmin-2p2x-avx-c32.c.o
+[ 27%] Linking CXX static library libabsl_strings_internal.a
+[ 28%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-rdminmax/gen/f32-rdmax-2p2x-scalar-c2.c.o
+[ 28%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-rdminmax/gen/f32-rdmin-2p2x-avx512f-c32.c.o
+[ 28%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-rdminmax/gen/f32-rdmax-2p2x-sse2-c32.c.o
+[ 28%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-rdsum/gen/f32-rdsum-7p7x-minmax-scalar.c.o
+[ 28%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-rdsum/gen/f32-rdsum-7p7x-minmax-sse2-u16.c.o
+[ 28%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-rdminmax/gen/f32-rdmin-2p2x-sse2-c32.c.o
+[ 28%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-rdsum/gen/f32-rdsum-7p7x-minmax-avx-u32.c.o
+[ 28%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-rdminmax/gen/f32-rdmin-2p2x-scalar-c2.c.o
+[ 28%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-rminmax/gen/f32-rmax-avx-u32-acc4.c.o
+[ 28%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-rminmax/gen/f32-rmax-scalar-u4-acc4.c.o
+[ 28%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-rminmax/gen/f32-rmax-avx512f-u64-acc4.c.o
+[ 28%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-rdsum/gen/f32-rdsum-7p7x-minmax-avx512f-u64.c.o
+[ 28%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-rminmax/gen/f32-rmin-avx512f-u64-acc4.c.o
+[ 28%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-rminmax/gen/f32-rmax-sse-u16-acc4.c.o
+[ 28%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-rminmax/gen/f32-rmin-avx-u32-acc4.c.o
+[ 28%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-rminmax/gen/f32-rminmax-avx-u32-acc4.c.o
+[ 28%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-rminmax/gen/f32-rminmax-avx512f-u64-acc4.c.o
+[ 28%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-rminmax/gen/f32-rminmax-scalar-u4-acc4.c.o
+[ 28%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-rminmax/gen/f32-rminmax-sse-u16-acc4.c.o
+[ 28%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-rminmax/gen/f32-rmin-scalar-u4-acc4.c.o
+[ 28%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-rminmax/gen/f32-rmin-sse-u16-acc4.c.o
+[ 28%] Built target strings_internal
+[ 28%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-rsum/gen/f32-rsum-sse2-u16-acc4.c.o
+[ 28%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-spmm/gen/f32-spmm-32x1-minmax-sse.c.o
+[ 29%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-rsum/gen/f32-rsum-avx-u32-acc4.c.o
+[ 29%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-rsum/gen/f32-rsum-avx512f-u32-acc2.c.o
+[ 29%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-rsum/gen/f32-rsum-scalar-u4-acc4.c.o
+[ 29%] Built target xnnpack-indirection
+[ 29%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-spmm/gen/f32-spmm-8x1-minmax-scalar.c.o
+[ 29%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-spmm/gen/f32-spmm-8x2-minmax-scalar.c.o
+[ 29%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-spmm/gen/f32-spmm-8x4-minmax-scalar.c.o
+[ 29%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vapproxgelu/gen/f32-vapproxgelu-scalar-rational-12-10-div.c.o
+[ 29%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vapproxgelu/gen/f32-vapproxgelu-avx-rational-12-10-div.c.o
+[ 29%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vapproxgelu/gen/f32-vapproxgelu-avx512f-rational-12-10-div.c.o
+[ 29%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vapproxgelu/gen/f32-vapproxgelu-sse2-rational-12-10-div.c.o
+[ 29%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vapproxgelu/gen/f32-vapproxgelu-fma3-rational-12-10-div.c.o
+[ 29%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vaddc-avx-u16.c.o
+[ 29%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vmax-avx512f-u32.c.o
+[ 29%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vadd-avx-u16.c.o
+[ 29%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vdiv-scalar-u2.c.o
+[ 29%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vadd-sse-u8.c.o
+[ 29%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vdivc-scalar-u2.c.o
+[ 29%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vdiv-avx512f-u32.c.o
+[ 29%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vapproxgelu/gen/f32-vapproxgelu-sse2fma-rational-12-10-div.c.o
+[ 29%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vdiv-sse-u8.c.o
+[ 29%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vaddc-scalar-u8.c.o
+[ 29%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vadd-avx512f-u32.c.o
+[ 29%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vdivc-avx-u16.c.o
+[ 29%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vaddc-avx512f-u32.c.o
+[ 29%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vmax-sse-u8.c.o
+[ 29%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vdivc-sse-u8.c.o
+[ 30%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vaddc-sse-u8.c.o
+[ 30%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vdiv-avx-u16.c.o
+[ 30%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vadd-scalar-u8.c.o
+[ 30%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vmaxc-avx-u16.c.o
+[ 30%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vdivc-avx512f-u32.c.o
+[ 30%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vmax-avx-u16.c.o
+[ 30%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vmax-scalar-u8.c.o
+[ 30%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vmaxc-avx512f-u32.c.o
+[ 30%] Linking CXX static library libabsl_low_level_hash.a
+[ 30%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vmaxc-sse-u8.c.o
+[ 30%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vmaxc-scalar-u8.c.o
+[ 30%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vmin-sse-u8.c.o
+[ 30%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vmin-avx-u16.c.o
+[ 30%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vminc-scalar-u8.c.o
+[ 30%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vmin-avx512f-u32.c.o
+[ 30%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vmul-sse-u8.c.o
+[ 30%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vmin-scalar-u8.c.o
+[ 30%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vminc-avx512f-u32.c.o
+[ 30%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vminc-sse-u8.c.o
+[ 31%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vminc-avx-u16.c.o
+[ 31%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vmul-avx-u16.c.o
+[ 31%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vmul-avx512f-u32.c.o
+[ 31%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vmulc-sse-u8.c.o
+[ 31%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vmulc-scalar-u8.c.o
+[ 31%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vmul-scalar-u8.c.o
+[ 30%] Built target xnnpack-operator-run
+[ 31%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vmulc-avx-u16.c.o
+[ 31%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vmulc-avx512f-u32.c.o
+[ 31%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vprelu-avx512f-u32.c.o
+[ 31%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vpreluc-avx-u16.c.o
+[ 31%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vprelu-scalar-u8.c.o
+[ 31%] Linking CXX static library libabsl_malloc_internal.a
+[ 31%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vpreluc-scalar-u8.c.o
+[ 31%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vprelu-sse2-u8.c.o
+[ 32%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vrdivc-avx512f-u32.c.o
+[ 32%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vpreluc-sse2-u8.c.o
+[ 32%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vrdivc-sse-u8.c.o
+[ 32%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vprelu-avx-u16.c.o
+[ 32%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vpreluc-avx512f-u32.c.o
+[ 32%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vrdivc-scalar-u2.c.o
+[ 32%] Built target malloc_internal
+[ 32%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vrdivc-avx-u16.c.o
+[ 32%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vrpreluc-avx-u16.c.o
+[ 32%] Built target low_level_hash
+[ 32%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vrsubc-avx512f-u32.c.o
+[ 32%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vrpreluc-sse2-u8.c.o
+[ 32%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vrpreluc-avx512f-u32.c.o
+[ 32%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vrpreluc-scalar-u8.c.o
+[ 32%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vrsubc-avx-u16.c.o
+[ 32%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vsqrdiff-sse-u8.c.o
+[ 32%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vsqrdiff-avx512f-u32.c.o
+[ 32%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vrsubc-scalar-u8.c.o
+[ 32%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vsqrdiff-avx-u16.c.o
+[ 32%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vrsubc-sse-u8.c.o
+[ 32%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vsqrdiff-scalar-u8.c.o
+[ 32%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vsqrdiffc-sse-u8.c.o
+[ 32%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vsqrdiffc-avx-u16.c.o
+[ 32%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vsub-avx512f-u32.c.o
+[ 32%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vsqrdiffc-scalar-u8.c.o
+[ 32%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vsub-avx-u16.c.o
+[ 32%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vsqrdiffc-avx512f-u32.c.o
+[ 32%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vsub-scalar-u8.c.o
+[ 32%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vsubc-scalar-u8.c.o
+[ 32%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vsubc-avx512f-u32.c.o
+[ 32%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vclamp/gen/f32-vclamp-avx512f.c.o
+[ 32%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vsubc-avx-u16.c.o
+[ 32%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vclamp/gen/f32-vclamp-scalar.c.o
+[ 32%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vclamp/gen/f32-vclamp-avx.c.o
+[ 33%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vsub-sse-u8.c.o
+[ 33%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vcmul/gen/f32-vcmul-avx512f-u32.c.o
+[ 33%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vcmul/gen/f32-vcmul-scalar-u4.c.o
+[ 32%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vclamp/gen/f32-vclamp-sse2.c.o
+[ 33%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vcmul/gen/f32-vcmul-fma3-u16.c.o
+[ 33%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vbinary/gen/f32-vsubc-sse-u8.c.o
+[ 33%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vcopysign/gen/f32-vcopysign-scalar.c.o
+[ 33%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vcmul/gen/f32-vcmul-sse-u8.c.o
+[ 33%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vcopysign/gen/f32-vcopysign-avx.c.o
+[ 33%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vcopysign/gen/f32-vcopysign-avx512f.c.o
+[ 33%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vcos/gen/f32-vcos-avx512f-rational-5-4-div.c.o
+[ 33%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vcopysign/gen/f32-vcopysignc-avx512f.c.o
+[ 33%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vcos/gen/f32-vcos-avx-rational-5-4-div.c.o
+[ 33%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vcopysign/gen/f32-vcopysign-sse2.c.o
+[ 33%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-velu/gen/f32-velu-avx512f-rr1-p6-u64.c.o
+[ 33%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vcos/gen/f32-vcos-fma3-rational-5-4-div.c.o
+[ 33%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vcos/gen/f32-vcos-scalar-rational-5-4-div.c.o
+[ 33%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-velu/gen/f32-velu-avx2-rr1-lut4-p4-perm-u32.c.o
+[ 33%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vcos/gen/f32-vcos-sse2fma-rational-5-4-div.c.o
+[ 33%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vcopysign/gen/f32-vcopysignc-avx.c.o
+[ 33%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vcos/gen/f32-vcos-sse2-rational-5-4-div.c.o
+[ 33%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vcopysign/gen/f32-vcopysignc-scalar.c.o
+[ 33%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-velu/gen/f32-velu-scalar-rr2-lut16-p3-u4.c.o
+[ 33%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-velu/gen/f32-velu-avx-rr2-lut4-p4-perm-u32.c.o
+[ 33%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vexp/gen/f32-vexp-avx-rational-3-2-div.c.o
+[ 34%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vcopysign/gen/f32-vrcopysignc-avx.c.o
+[ 34%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vcopysign/gen/f32-vrcopysignc-avx512f.c.o
+[ 34%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vcopysign/gen/f32-vcopysignc-sse2.c.o
+[ 34%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vcopysign/gen/f32-vrcopysignc-scalar.c.o
+[ 34%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vexp/gen/f32-vexp-sse2-rational-3-2-div.c.o
+[ 34%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vcopysign/gen/f32-vrcopysignc-sse2.c.o
+[ 34%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-velu/gen/f32-velu-sse2-rr2-lut16-p3-u12.c.o
+[ 34%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vexp/gen/f32-vexp-fma3-rational-3-2-div.c.o
+[ 34%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vexp/gen/f32-vexp-avx512f-rational-3-2-div.c.o
+[ 34%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vexp/gen/f32-vexp-scalar-rational-3-2-div.c.o
+[ 35%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vhswish/gen/f32-vhswish-avx512f.c.o
+[ 35%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vexp/gen/f32-vexp-sse2fma-rational-3-2-div.c.o
+[ 35%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vgelu/gen/f32-vgelu-sse2fma-rational-12-10-div.c.o
+[ 35%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vgelu/gen/f32-vgelu-avx-rational-12-10-div.c.o
+[ 35%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vgelu/gen/f32-vgelu-avx512f-rational-12-10-div.c.o
+[ 35%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vhswish/gen/f32-vhswish-avx.c.o
+[ 35%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vgelu/gen/f32-vgelu-fma3-rational-12-10-div.c.o
+[ 35%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vhswish/gen/f32-vhswish-fma3.c.o
+[ 35%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vhswish/gen/f32-vhswish-scalar.c.o
+[ 35%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vgelu/gen/f32-vgelu-sse2-rational-12-10-div.c.o
+[ 34%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vgelu/gen/f32-vgelu-scalar-rational-12-10-div.c.o
+[ 35%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vhswish/gen/f32-vhswish-sse2.c.o
+[ 35%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vhswish/gen/f32-vhswish-sse2fma.c.o
+[ 35%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vlog/gen/f32-vlog-scalar-rational-3-3-div.c.o
+[ 35%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vlog/gen/f32-vlog-fma3-rational-3-3-div.c.o
+[ 35%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vlog/gen/f32-vlog-sse2fma-rational-3-3-div.c.o
+[ 35%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vlog/gen/f32-vlog-avx2-rational-3-3-div.c.o
+[ 35%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vlog/gen/f32-vlog-avx512f-rational-3-3-div.c.o
+[ 35%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vlrelu/gen/f32-vlrelu-scalar-u4.c.o
+[ 36%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vlrelu/gen/f32-vlrelu-sse-u8.c.o
+[ 36%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vlog/gen/f32-vlog-sse2-rational-3-3-div.c.o
+[ 36%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vlrelu/gen/f32-vlrelu-avx-u16.c.o
+[ 36%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vmulcaddc/gen/f32-vmulcaddc-c1-minmax-scalar-2x.c.o
+[ 36%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vrnd/gen/f32-vrndd-avx512f-u16.c.o
+[ 36%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vmulcaddc/gen/f32-vmulcaddc-c4-minmax-sse-2x.c.o
+[ 36%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vlrelu/gen/f32-vlrelu-avx512f-u16.c.o
+[ 36%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vrnd/gen/f32-vrndd-sse2-u8.c.o
+[ 36%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vrnd/gen/f32-vrndd-avx-u16.c.o
+[ 36%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vrnd/gen/f32-vrndd-sse41-u8.c.o
+[ 36%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vlrelu/gen/f32-vlrelu-sse41-u8.c.o
+[ 36%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vrnd/gen/f32-vrndd-scalar-libm-u1.c.o
+[ 36%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vrnd/gen/f32-vrndne-avx512f-u16.c.o
+[ 36%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vrnd/gen/f32-vrndu-sse41-u8.c.o
+[ 36%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vrnd/gen/f32-vrndz-avx512f-u16.c.o
+[ 36%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vrnd/gen/f32-vrndu-scalar-libm-u1.c.o
+[ 36%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vrnd/gen/f32-vrndu-avx512f-u16.c.o
+[ 36%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vrnd/gen/f32-vrndu-avx-u16.c.o
+[ 36%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vrnd/gen/f32-vrndz-avx-u16.c.o
+[ 36%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vrnd/gen/f32-vrndu-sse2-u8.c.o
+[ 36%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vrnd/gen/f32-vrndne-sse2-u8.c.o
+[ 36%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vrnd/gen/f32-vrndne-scalar-libm-u1.c.o
+[ 36%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vrnd/gen/f32-vrndz-scalar-libm-u1.c.o
+[ 36%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vrnd/gen/f32-vrndne-avx-u16.c.o
+[ 37%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vrnd/gen/f32-vrndz-sse2-u8.c.o
+[ 37%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vrnd/gen/f32-vrndne-sse41-u8.c.o
+[ 37%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vrsqrt/gen/f32-vrsqrt-scalar-sqrt.c.o
+[ 37%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vsigmoid/gen/f32-vsigmoid-avx2-rr1-p5-div-u16.c.o
+[ 37%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vrsqrt/gen/f32-vrsqrt-sse2-rsqrt.c.o
+[ 37%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vrsqrt/gen/f32-vrsqrt-sse2-sqrt.c.o
+[ 37%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vrnd/gen/f32-vrndz-sse41-u8.c.o
+[ 37%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vrsqrt/gen/f32-vrsqrt-avx-rsqrt.c.o
+[ 37%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vsigmoid/gen/f32-vsigmoid-scalar-rr2-lut64-p2-div-u2.c.o
+[ 37%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vsigmoid/gen/f32-vsigmoid-avx-rr2-p5-nr2-u16.c.o
+[ 37%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vsigmoid/gen/f32-vsigmoid-sse2-rr2-lut64-p2-div-u8.c.o
+[ 37%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vrsqrt/gen/f32-vrsqrt-avx-sqrt.c.o
+[ 37%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vsigmoid/gen/f32-vsigmoid-avx512f-rr2-lut32-p2-perm2-scalef-div-u64.c.o
+[ 37%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vrsqrt/gen/f32-vrsqrt-avx512f-rsqrt.c.o
+[ 37%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vrsqrt/gen/f32-vrsqrt-avx512f-sqrt.c.o
+[ 37%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vrsqrt/gen/f32-vrsqrt-scalar-rsqrt-u1.c.o
+[ 37%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vsin/gen/f32-vsin-sse2-rational-5-4-div.c.o
+[ 37%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vsigmoid/gen/f32-vsigmoid-sse41-rr2-lut64-p2-div-u8.c.o
+[ 37%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vsqrt/gen/f32-vsqrt-avx-rsqrt.c.o
+[ 38%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vsin/gen/f32-vsin-sse2fma-rational-5-4-div.c.o
+[ 38%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vsin/gen/f32-vsin-avx-rational-5-4-div.c.o
+[ 38%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vsin/gen/f32-vsin-scalar-rational-5-4-div.c.o
+[ 38%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vsqrt/gen/f32-vsqrt-avx-sqrt.c.o
+[ 38%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vsqrt/gen/f32-vsqrt-avx512f-rsqrt.c.o
+[ 38%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vsin/gen/f32-vsin-fma3-rational-5-4-div.c.o
+[ 38%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vsin/gen/f32-vsin-avx512f-rational-5-4-div.c.o
+[ 38%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vtanh/gen/f32-vtanh-avx-rational-9-8-div.c.o
+[ 38%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vsqrt/gen/f32-vsqrt-scalar-sqrt.c.o
+[ 38%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vtanh/gen/f32-vtanh-fma3-rational-9-8-div.c.o
+[ 38%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vsqrt/gen/f32-vsqrt-sse2-rsqrt.c.o
+[ 38%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vsqrt/gen/f32-vsqrt-sse2-sqrt.c.o
+[ 38%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vunary/gen/f32-vabs-avx.c.o
+[ 38%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vtanh/gen/f32-vtanh-avx512f-rational-9-8-div.c.o
+[ 38%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vtanh/gen/f32-vtanh-scalar-rational-9-8-div.c.o
+[ 38%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vtanh/gen/f32-vtanh-sse2-rational-9-8-div.c.o
+[ 38%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vunary/gen/f32-vabs-avx512f.c.o
+[ 38%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vunary/gen/f32-vneg-avx.c.o
+[ 38%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vtanh/gen/f32-vtanh-sse2fma-rational-9-8-div.c.o
+[ 38%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vunary/gen/f32-vneg-scalar.c.o
+[ 38%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vunary/gen/f32-vneg-sse2.c.o
+[ 39%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vunary/gen/f32-vsqr-avx.c.o
+[ 39%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vunary/gen/f32-vsqr-sse2.c.o
+[ 39%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vunary/gen/f32-vsqr-avx512f.c.o
+[ 39%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f16-qb4w-gemm/gen/qd8-f16-qb4w-gemm-1x8c8-minmax-avx2.c.o
+[ 39%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vunary/gen/f32-vneg-avx512f.c.o
+[ 39%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vunary/gen/f32-vsqr-scalar.c.o
+[ 39%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f16-qc4w-gemm/gen/qd8-f16-qc4w-gemm-1x8c8-minmax-avx2-madd-prfm.c.o
+[ 39%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f16-qc4w-gemm/gen/qd8-f16-qc4w-gemm-8x8c8-minmax-avx256skx-madd-prfm.c.o
+[ 39%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f16-qc4w-gemm/gen/qd8-f16-qc4w-gemm-1x8c8-minmax-avx256skx-madd-prfm.c.o
+[ 39%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f16-qc4w-gemm/gen/qd8-f16-qc4w-gemm-4x8c8-minmax-avx2-madd-prfm.c.o
+[ 39%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f16-qc4w-gemm/gen/qd8-f16-qc4w-gemm-1x8c8-minmax-avx256vnni.c.o
+[ 39%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f16-qc4w-gemm/gen/qd8-f16-qc4w-gemm-8x8c8-minmax-avx256vnni.c.o
+[ 39%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f16-qc8w-gemm/gen/qd8-f16-qc8w-gemm-1x8c8-minmax-avx2.c.o
+[ 39%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f16-qb4w-gemm/gen/qd8-f16-qb4w-gemm-3x8c8-minmax-avx2.c.o
+[ 39%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vunary/gen/f32-vabs-sse2.c.o
+[ 39%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/f32-vunary/gen/f32-vabs-scalar.c.o
+[ 39%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f16-qc8w-gemm/gen/qd8-f16-qc8w-gemm-1x8c8-minmax-avx256skx.c.o
+[ 39%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f16-qc8w-gemm/gen/qd8-f16-qc8w-gemm-5x8c8-minmax-avx256skx.c.o
+[ 39%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f16-qc8w-gemm/gen/qd8-f16-qc8w-gemm-1x8c8-minmax-avx256vnni.c.o
+[ 39%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f16-qc8w-gemm/gen/qd8-f16-qc8w-gemm-8x8c8-minmax-avx256vnni.c.o
+[ 39%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f16-qc8w-igemm/gen/qd8-f16-qc8w-igemm-3x8c8-minmax-avx2.c.o
+[ 39%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f16-qc8w-igemm/gen/qd8-f16-qc8w-igemm-1x8c8-minmax-avx256skx.c.o
+[ 39%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f16-qc8w-gemm/gen/qd8-f16-qc8w-gemm-3x8c8-minmax-avx2.c.o
+[ 39%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f16-qc8w-igemm/gen/qd8-f16-qc8w-igemm-1x8c8-minmax-avx2.c.o
+[ 40%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f16-qc8w-igemm/gen/qd8-f16-qc8w-igemm-5x8c8-minmax-avx256skx.c.o
+[ 40%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f16-qc8w-igemm/gen/qd8-f16-qc8w-igemm-1x8c8-minmax-avx256vnni.c.o
+[ 40%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qb4w-gemm/gen/qd8-f32-qb4w-gemm-1x16c8-minmax-avx512vnni-prfm.c.o
+[ 40%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qb4w-gemm/gen/qd8-f32-qb4w-gemm-1x4-minmax-scalar.c.o
+[ 40%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f16-qc8w-igemm/gen/qd8-f16-qc8w-igemm-8x8c8-minmax-avx256vnni.c.o
+[ 40%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qb4w-gemm/gen/qd8-f32-qb4w-gemm-1x4c8-minmax-avx-ld128.c.o
+[ 40%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qb4w-gemm/gen/qd8-f32-qb4w-gemm-1x8c8-minmax-avx2.c.o
+[ 40%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qb4w-gemm/gen/qd8-f32-qb4w-gemm-1x4c8-minmax-sse2-ld128.c.o
+[ 40%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qb4w-gemm/gen/qd8-f32-qb4w-gemm-4x4c8-minmax-sse2-ld128.c.o
+[ 40%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qb4w-gemm/gen/qd8-f32-qb4w-gemm-1x4c8-minmax-sse41-ld128.c.o
+[ 40%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qb4w-gemm/gen/qd8-f32-qb4w-gemm-3x4c8-minmax-sse41-ld128.c.o
+[ 40%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qb4w-gemm/gen/qd8-f32-qb4w-gemm-4x4c8-minmax-avx-ld128.c.o
+[ 40%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qb4w-gemm/gen/qd8-f32-qb4w-gemm-3x8c8-minmax-avx2.c.o
+[ 40%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc4w-gemm/gen/qd8-f32-qc4w-gemm-1x4c8-minmax-sse2-ld128.c.o
+[ 40%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc4w-gemm/gen/qd8-f32-qc4w-gemm-1x4c8-minmax-ssse3-madd-prfm.c.o
+[ 40%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qb4w-gemm/gen/qd8-f32-qb4w-gemm-4x4-minmax-scalar.c.o
+[ 40%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qb4w-gemm/gen/qd8-f32-qb4w-gemm-8x16c8-minmax-avx512vnni-prfm.c.o
+[ 40%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc4w-gemm/gen/qd8-f32-qc4w-gemm-1x8c8-minmax-avx256skx-madd-prfm.c.o
+[ 40%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc4w-gemm/gen/qd8-f32-qc4w-gemm-1x4-minmax-scalar.c.o
+[ 40%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc4w-gemm/gen/qd8-f32-qc4w-gemm-4x4c8-minmax-sse2-ld128.c.o
+[ 40%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc4w-gemm/gen/qd8-f32-qc4w-gemm-1x16c8-minmax-avx512skx-madd-prfm.c.o
+[ 40%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc4w-gemm/gen/qd8-f32-qc4w-gemm-1x16c8-minmax-avx512vnni-prfm.c.o
+[ 40%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc4w-gemm/gen/qd8-f32-qc4w-gemm-1x8c8-minmax-avx2-madd-prfm.c.o
+[ 40%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc4w-gemm/gen/qd8-f32-qc4w-gemm-4x8c8-minmax-avx2-madd-prfm.c.o
+[ 41%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc4w-gemm/gen/qd8-f32-qc4w-gemm-4x4-minmax-scalar.c.o
+[ 41%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc4w-gemm/gen/qd8-f32-qc4w-gemm-5x4c8-minmax-ssse3-madd-prfm.c.o
+[ 41%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc4w-gemm/gen/qd8-f32-qc4w-gemm-8x16c8-minmax-avx512skx-madd-prfm.c.o
+[ 41%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc4w-gemm/gen/qd8-f32-qc4w-gemm-8x16c8-minmax-avx512vnni-prfm.c.o
+[ 41%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc4w-gemm/gen/qd8-f32-qc4w-gemm-8x8c8-minmax-avx256skx-madd-prfm.c.o
+[ 41%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc8w-gemm/gen/qd8-f32-qc8w-gemm-1x16c8-minmax-avx512skx-prfm.c.o
+[ 41%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc8w-gemm/gen/qd8-f32-qc8w-gemm-10x16c8-minmax-avx512vnni-prfm.c.o
+[ 41%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc8w-gemm/gen/qd8-f32-qc8w-gemm-1x2-minmax-scalar.c.o
+[ 41%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc8w-gemm/gen/qd8-f32-qc8w-gemm-1x16c8-minmax-avx512vnni-prfm.c.o
+[ 41%] Building ASM object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc8w-gemm/gen/qd8-f32-qc8w-gemm-1x64-minmax-asm-amd64-avx512vnni.S.o
+[ 41%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc8w-gemm/gen/qd8-f32-qc8w-gemm-1x4-minmax-scalar.c.o
+[ 41%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc8w-gemm/gen/qd8-f32-qc8w-gemm-1x4c8-minmax-sse2-ld64.c.o
+[ 41%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc8w-gemm/gen/qd8-f32-qc8w-gemm-1x8c8-minmax-avx2.c.o
+[ 41%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc8w-gemm/gen/qd8-f32-qc8w-gemm-1x4c8-minmax-sse41-ld64.c.o
+[ 41%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc8w-gemm/gen/qd8-f32-qc8w-gemm-4x4c8-minmax-sse2-ld64.c.o
+[ 41%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc8w-gemm/gen/qd8-f32-qc8w-gemm-4x4-minmax-scalar.c.o
+[ 41%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc8w-gemm/gen/qd8-f32-qc8w-gemm-4x4c8-minmax-sse41-ld64.c.o
+[ 41%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc8w-gemm/gen/qd8-f32-qc8w-gemm-1x8c8-minmax-avx256skx.c.o
+[ 41%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc8w-gemm/gen/qd8-f32-qc8w-gemm-8x16c8-minmax-avx512skx-prfm.c.o
+[ 41%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc8w-gemm/gen/qd8-f32-qc8w-gemm-4x8c8-minmax-avx2.c.o
+[ 42%] Building ASM object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc8w-gemm/gen/qd8-f32-qc8w-gemm-5x64-minmax-asm-amd64-avx512vnni.S.o
+[ 42%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc8w-gemm/gen/qd8-f32-qc8w-gemm-8x8c8-minmax-avx256skx.c.o
+[ 42%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc8w-igemm/gen/qd8-f32-qc8w-igemm-10x16c8-minmax-avx512vnni-prfm.c.o
+[ 42%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc8w-igemm/gen/qd8-f32-qc8w-igemm-1x16c8-minmax-avx512skx-prfm.c.o
+[ 42%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc8w-igemm/gen/qd8-f32-qc8w-igemm-1x16c8-minmax-avx512vnni-prfm.c.o
+[ 42%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc8w-igemm/gen/qd8-f32-qc8w-igemm-1x2-minmax-scalar.c.o
+[ 42%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc8w-igemm/gen/qd8-f32-qc8w-igemm-1x4c8-minmax-sse2-ld64.c.o
+[ 42%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc8w-igemm/gen/qd8-f32-qc8w-igemm-1x4-minmax-scalar.c.o
+[ 42%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc8w-igemm/gen/qd8-f32-qc8w-igemm-8x16c8-minmax-avx512skx-prfm.c.o
+[ 42%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc8w-igemm/gen/qd8-f32-qc8w-igemm-1x4c8-minmax-sse41-ld64.c.o
+[ 42%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc8w-igemm/gen/qd8-f32-qc8w-igemm-1x8c8-minmax-avx256skx.c.o
+[ 42%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc8w-igemm/gen/qd8-f32-qc8w-igemm-4x4c8-minmax-sse41-ld64.c.o
+[ 42%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-dwconv/gen/qs8-dwconv-25p8c-minmax-fp32-sse2-mul16-add16.c.o
+[ 42%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc8w-igemm/gen/qd8-f32-qc8w-igemm-4x4c8-minmax-sse2-ld64.c.o
+[ 42%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc8w-igemm/gen/qd8-f32-qc8w-igemm-4x4-minmax-scalar.c.o
+[ 42%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc8w-igemm/gen/qd8-f32-qc8w-igemm-8x8c8-minmax-avx256skx.c.o
+[ 42%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc8w-igemm/gen/qd8-f32-qc8w-igemm-1x8c8-minmax-avx2.c.o
+[ 42%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qd8-f32-qc8w-igemm/gen/qd8-f32-qc8w-igemm-4x8c8-minmax-avx2.c.o
+[ 42%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-dwconv/gen/qs8-dwconv-25p32c-minmax-fp32-avx512skx-mul32.c.o
+[ 43%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-dwconv/gen/qs8-dwconv-25p2c-minmax-fp32-scalar-lrintf.c.o
+[ 42%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-dwconv/gen/qs8-dwconv-25p16c-minmax-fp32-avx2-mul32.c.o
+[ 43%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-dwconv/gen/qs8-dwconv-9p1c-minmax-fp32-scalar-fmagic.c.o
+[ 42%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-dwconv/gen/qs8-dwconv-25p1c-minmax-fp32-scalar-fmagic.c.o
+[ 42%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-dwconv/gen/qs8-dwconv-9p16c-minmax-fp32-avx-mul16-add16.c.o
+[ 42%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-dwconv/gen/qs8-dwconv-9p16c-minmax-fp32-avx2-mul32.c.o
+[ 42%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-dwconv/gen/qs8-dwconv-25p16c-minmax-fp32-avx-mul16-add16.c.o
+[ 43%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-dwconv/gen/qs8-dwconv-9p8c-minmax-fp32-sse2-mul16-add16.c.o
+[ 42%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-dwconv/gen/qs8-dwconv-9p8c-minmax-fp32-sse41-mul16-add16.c.o
+[ 43%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-dwconv/gen/qs8-dwconv-9p2c-minmax-fp32-scalar-lrintf.c.o
+[ 42%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-dwconv/gen/qs8-dwconv-25p8c-minmax-fp32-sse41-mul16-add16.c.o
+[ 43%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-dwconv/gen/qs8-dwconv-9p32c-minmax-fp32-avx512skx-mul32.c.o
+[ 43%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-f32-vcvt/gen/qs8-f32-vcvt-avx-u32.c.o
+[ 43%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-packw/gen/qs8-packw-x8c8-gemm-gio-scalar.c.o
+[ 43%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-f32-vcvt/gen/qs8-f32-vcvt-avx2-u16.c.o
+[ 43%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-packw/gen/qs8-packw-x8c8-gemm-goi-avx256vnni-prfm.c.o
+[ 44%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-packw/gen/qs8-packw-x64c4-gemm-goi-avx256vnni-prfm.c.o
+[ 44%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-packw/gen/qs8-packw-x8c8-gemm-goi-avx2-madd.c.o
+[ 44%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-packw/gen/qs8-packw-x4c8-gemm-gio-scalar.c.o
+[ 44%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-f32-vcvt/gen/qs8-f32-vcvt-sse41-u16.c.o
+[ 43%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-f16-vcvt/gen/qs8-f16-vcvt-avx2-u16.c.o
+[ 44%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-packw/gen/qs8-packw-x16c8-gemm-goi-scalar.c.o
+[ 44%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc4w-gemm/gen/qs8-qc4w-gemm-1x4c8-minmax-ssse3-madd-prfm.c.o
+[ 44%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-f32-vcvt/gen/qs8-f32-vcvt-avx512skx-u32.c.o
+[ 44%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-packw/gen/qs8-packw-x4c8-gemm-goi-scalar.c.o
+[ 44%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-packw/gen/qs8-packw-x16c8-gemm-goi-avx256vnni-prfm.c.o
+[ 44%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-f32-vcvt/gen/qs8-f32-vcvt-sse2-u32.c.o
+[ 44%] Building ASM object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc4w-gemm/gen/qs8-qc4w-gemm-1x16c8-minmax-fp32-asm-amd64-avx512vnni.S.o
+[ 44%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc4w-gemm/gen/qs8-qc4w-gemm-1x4c8-minmax-avx-madd-prfm.c.o
+[ 44%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-f32-vcvt/gen/qs8-f32-vcvt-scalar-u4.c.o
+[ 44%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc4w-gemm/gen/qs8-qc4w-gemm-5x4c8-minmax-avx-madd-prfm.c.o
+[ 44%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc4w-gemm/gen/qs8-qc4w-gemm-1x8c8-minmax-avx2-madd-prfm.c.o
+[ 44%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc4w-gemm/gen/qs8-qc4w-gemm-5x4c8-minmax-ssse3-madd-prfm.c.o
+[ 44%] Building ASM object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc4w-gemm/gen/qs8-qc4w-gemm-8x16c8-minmax-fp32-asm-amd64-avx512vnni.S.o
+[ 44%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc4w-gemm/gen/qs8-qc4w-gemm-7x8c8-minmax-avx2-madd-prfm.c.o
+[ 44%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-dwconv/gen/qs8-qc8w-dwconv-25p16c-minmax-fp32-avx-mul16-add16.c.o
+[ 44%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-dwconv/gen/qs8-qc8w-dwconv-25p32c-minmax-fp32-avx512skx-mul32.c.o
+[ 44%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-dwconv/gen/qs8-qc8w-dwconv-25p16c-minmax-fp32-avx2-mul32.c.o
+[ 44%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc4w-gemm/qs8-qc4w-gemm-1x2-minmax-fp32-scalar-lrintf.c.o
+[ 44%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-dwconv/gen/qs8-qc8w-dwconv-25p1c-minmax-fp32-scalar-fmagic.c.o
+[ 44%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-dwconv/gen/qs8-qc8w-dwconv-25p2c-minmax-fp32-scalar-lrintf.c.o
+[ 44%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-dwconv/gen/qs8-qc8w-dwconv-3p2c-minmax-fp32-scalar-lrintf.c.o
+[ 44%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-dwconv/gen/qs8-qc8w-dwconv-25p8c-minmax-fp32-sse41-mul16.c.o
+[ 44%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-dwconv/gen/qs8-qc8w-dwconv-3p1c-minmax-fp32-scalar-fmagic.c.o
+[ 44%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-dwconv/gen/qs8-qc8w-dwconv-25p8c-minmax-fp32-sse2-mul16.c.o
+[ 45%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-dwconv/gen/qs8-qc8w-dwconv-3p16c-minmax-fp32-avx2-mul32.c.o
+[ 45%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-dwconv/gen/qs8-qc8w-dwconv-3p16c-minmax-fp32-avx-mul16-add16.c.o
+[ 45%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-dwconv/gen/qs8-qc8w-dwconv-9p16c-minmax-fp32-avx2-mul32.c.o
+[ 45%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-dwconv/gen/qs8-qc8w-dwconv-3p32c-minmax-fp32-avx512skx-mul32.c.o
+[ 45%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-dwconv/gen/qs8-qc8w-dwconv-3p8c-minmax-fp32-sse41-mul16.c.o
+[ 45%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-dwconv/gen/qs8-qc8w-dwconv-3p8c-minmax-fp32-sse2-mul16.c.o
+[ 45%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-dwconv/gen/qs8-qc8w-dwconv-9p1c-minmax-fp32-scalar-fmagic.c.o
+[ 45%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-dwconv/gen/qs8-qc8w-dwconv-9p16c-minmax-fp32-avx-mul16-add16.c.o
+[ 45%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-dwconv/gen/qs8-qc8w-dwconv-9p2c-minmax-fp32-scalar-lrintf.c.o
+[ 45%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-dwconv/gen/qs8-qc8w-dwconv-9p32c-minmax-fp32-avx512skx-mul32.c.o
+[ 45%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-gemm/gen/qs8-qc8w-gemm-1x4-minmax-fp32-scalar-lrintf.c.o
+[ 45%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-gemm/gen/qs8-qc8w-gemm-1x4c8-minmax-fp32-avx-ld128.c.o
+[ 45%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-gemm/gen/qs8-qc8w-gemm-1x16c8-minmax-fp32-avx512skx-prfm.c.o
+[ 45%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-dwconv/gen/qs8-qc8w-dwconv-9p8c-minmax-fp32-sse41-mul16.c.o
+[ 45%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-gemm/gen/qs8-qc8w-gemm-3x4c8-minmax-fp32-sse2-ld64.c.o
+[ 45%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-gemm/gen/qs8-qc8w-gemm-3x4c8-minmax-fp32-sse41-ld64.c.o
+[ 45%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-dwconv/gen/qs8-qc8w-dwconv-9p8c-minmax-fp32-sse2-mul16.c.o
+[ 45%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-gemm/gen/qs8-qc8w-gemm-4x8c8-minmax-fp32-avx256skx.c.o
+[ 46%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-gemm/gen/qs8-qc8w-gemm-1x16c8-minmax-fp32-avx512vnni-prfm.c.o
+[ 45%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-gemm/gen/qs8-qc8w-gemm-1x8c8-minmax-fp32-avx256skx.c.o
+[ 46%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-gemm/gen/qs8-qc8w-gemm-3x8c8-minmax-fp32-avx2.c.o
+[ 46%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-gemm/gen/qs8-qc8w-gemm-1x4c8-minmax-fp32-sse41-ld64.c.o
+[ 46%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-gemm/gen/qs8-qc8w-gemm-1x8c8-minmax-fp32-avx2.c.o
+[ 46%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-gemm/gen/qs8-qc8w-gemm-2x4c8-minmax-fp32-avx-ld128.c.o
+[ 46%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-gemm/gen/qs8-qc8w-gemm-7x16c8-minmax-fp32-avx512skx-prfm.c.o
+[ 46%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-gemm/gen/qs8-qc8w-gemm-3x4-minmax-fp32-scalar-lrintf.c.o
+[ 46%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-gemm/gen/qs8-qc8w-gemm-1x4c8-minmax-fp32-sse2-ld64.c.o
+[ 46%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-gemm/gen/qs8-qc8w-gemm-7x16c8-minmax-fp32-avx512vnni-prfm.c.o
+[ 46%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-igemm/gen/qs8-qc8w-igemm-7x16c8-minmax-fp32-avx512skx-prfm.c.o
+[ 46%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-rdsum/gen/qs8-rdsum-minmax-fp32-scalar-u1-acc1.c.o
+[ 46%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-igemm/gen/qs8-qc8w-igemm-1x4c8-minmax-fp32-sse2-ld64.c.o
+[ 46%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-rsum/gen/qs8-rsum-avx512vnni-u128-acc2.c.o
+[ 46%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-rdsum/gen/qs8-rdsum-7p7x-minmax-fp32-avx2-u64.c.o
+[ 46%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qu8-packw/gen/qs8-qu8-packw-x16c8-gemm-goi-scalar.c.o
+[ 46%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-rdsum/gen/qs8-rdsum-7p7x-minmax-fp32-avx512skx-u64.c.o
+[ 46%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-igemm/gen/qs8-qc8w-igemm-1x4-minmax-fp32-scalar-lrintf.c.o
+[ 46%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vadd/gen/qs8-vadd-minmax-sse41-mul16-ld64-u8.c.o
+[ 46%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-rsum/gen/qs8-rsum-avx256skx-u64-acc2.c.o
+[ 46%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-igemm/gen/qs8-qc8w-igemm-2x4c8-minmax-fp32-avx-ld128.c.o
+[ 46%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vadd/gen/qs8-vadd-minmax-avx512skx-mul32-ld128-u16.c.o
+[ 46%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vadd/gen/qs8-vadd-minmax-avx2-mul32-ld64-u16.c.o
+[ 46%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-rsum/gen/qs8-rsum-scalar-u4.c.o
+[ 46%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vadd/gen/qs8-vadd-minmax-sse2-mul16-ld64-u8.c.o
+[ 46%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vadd/gen/qs8-vadd-minmax-scalar-u4.c.o
+[ 46%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-rsum/gen/qs8-rsum-avx512skx-u128-acc2.c.o
+[ 46%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vadd/gen/qs8-vadd-minmax-avx-mul32-ld32-u8.c.o
+[ 46%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vaddc/gen/qs8-vaddc-minmax-avx2-mul32-ld64-u16.c.o
+[ 47%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vaddc/gen/qs8-vaddc-minmax-avx-mul32-ld32-u8.c.o
+[ 46%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-igemm/gen/qs8-qc8w-igemm-7x16c8-minmax-avx512vnni-prfm.c.o
+[ 47%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vaddc/gen/qs8-vaddc-minmax-avx512skx-mul32-ld128-u16.c.o
+[ 47%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-igemm/gen/qs8-qc8w-igemm-1x4c8-minmax-fp32-avx-ld128.c.o
+[ 46%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-igemm/gen/qs8-qc8w-igemm-1x8c8-minmax-fp32-avx256skx.c.o
+[ 46%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vadd/gen/qs8-vadd-minmax-scalar-u1.c.o
+[ 46%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-rdsum/gen/qs8-rdsum-7p7x-minmax-fp32-sse41-u64.c.o
+[ 46%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-rsum/gen/qs8-rsum-ssse3-u32-acc2.c.o
+[ 47%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qu8-packw/gen/qs8-qu8-packw-x16c8-gemm-goi-avx256vnni.c.o
+[ 47%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-igemm/gen/qs8-qc8w-igemm-1x16c8-minmax-avx512vnni-prfm.c.o
+[ 47%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-igemm/gen/qs8-qc8w-igemm-1x8c8-minmax-fp32-avx2.c.o
+[ 47%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-rsum/gen/qs8-rsum-avx2-u64-acc2.c.o
+[ 47%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-igemm/gen/qs8-qc8w-igemm-3x4-minmax-fp32-scalar-lrintf.c.o
+[ 47%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-igemm/gen/qs8-qc8w-igemm-3x4c8-minmax-fp32-sse41-ld64.c.o
+[ 47%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vaddc/gen/qs8-vaddc-minmax-scalar-u1.c.o
+[ 48%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-igemm/gen/qs8-qc8w-igemm-4x8c8-minmax-fp32-avx256skx.c.o
+[ 47%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-igemm/gen/qs8-qc8w-igemm-1x4c8-minmax-fp32-sse41-ld64.c.o
+[ 47%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-igemm/gen/qs8-qc8w-igemm-1x16c8-minmax-fp32-avx512skx-prfm.c.o
+[ 47%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-igemm/gen/qs8-qc8w-igemm-3x4c8-minmax-fp32-sse2-ld64.c.o
+[ 47%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-qc8w-igemm/gen/qs8-qc8w-igemm-3x8c8-minmax-fp32-avx2.c.o
+[ 48%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vaddc/gen/qs8-vaddc-minmax-scalar-u4.c.o
+[ 48%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vaddc/gen/qs8-vaddc-minmax-sse41-mul16-ld64-u8.c.o
+[ 48%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vcvt/gen/qs8-vcvt-sse2-u32.c.o
+[ 48%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vlrelu/gen/qs8-vlrelu-sse2-u32.c.o
+[ 48%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vcvt/gen/qs8-vcvt-avx-u32.c.o
+[ 48%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vcvt/gen/qs8-vcvt-avx2-u32.c.o
+[ 48%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vcvt/gen/qs8-vcvt-sse41-u32.c.o
+[ 48%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vcvt/gen/qs8-vcvt-scalar-u4.c.o
+[ 48%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vlrelu/gen/qs8-vlrelu-sse41-u32.c.o
+[ 48%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vaddc/gen/qs8-vaddc-minmax-sse2-mul16-ld64-u8.c.o
+[ 48%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vlrelu/gen/qs8-vlrelu-scalar-andxor-u4.c.o
+[ 48%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vlrelu/gen/qs8-vlrelu-avx2-u32.c.o
+[ 49%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vcvt/gen/qs8-vcvt-ssse3-u32.c.o
+[ 49%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vlrelu/gen/qs8-vlrelu-avx-u32.c.o
+[ 49%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vmul/gen/qs8-vmul-minmax-fp32-scalar-u4.c.o
+[ 49%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vmul/gen/qs8-vmul-minmax-fp32-sse2-mul16-ld64-u8.c.o
+[ 49%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vlrelu/gen/qs8-vlrelu-ssse3-u32.c.o
+[ 49%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vmulc/gen/qs8-vmulc-minmax-fp32-sse2-mul16-ld64-u8.c.o
+[ 49%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vmul/gen/qs8-vmul-minmax-fp32-avx-mul16-ld64-u16.c.o
+[ 49%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vmul/gen/qs8-vmul-minmax-fp32-sse41-mul16-ld64-u16.c.o
+[ 49%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vmulc/gen/qs8-vmulc-minmax-fp32-avx-mul16-ld64-u16.c.o
+[ 49%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vmulc/gen/qs8-vmulc-minmax-fp32-scalar-u4.c.o
+[ 49%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vmulc/gen/qs8-vmulc-minmax-fp32-sse41-mul16-ld64-u16.c.o
+[ 49%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-dwconv/gen/qu8-dwconv-25p16c-minmax-fp32-avx2-mul32.c.o
+[ 49%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-dwconv/gen/qu8-dwconv-25p16c-minmax-fp32-avx-mul16.c.o
+[ 49%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-dwconv/gen/qu8-dwconv-9p2c-minmax-fp32-scalar-lrintf.c.o
+[ 49%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vprelu/gen/qs8-vprelu-scalar-u8.c.o
+[ 49%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-dwconv/gen/qu8-dwconv-25p8c-minmax-fp32-sse41-mul16.c.o
+[ 49%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vpreluc/gen/qs8-vpreluc-avx2-u16.c.o
+[ 49%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vpreluc/gen/qs8-vpreluc-scalar-u8.c.o
+[ 49%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vrpreluc/gen/qs8-vrpreluc-avx2-u16.c.o
+[ 49%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vprelu/gen/qs8-vprelu-avx2-u16.c.o
+[ 49%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qs8-vrpreluc/gen/qs8-vrpreluc-scalar-u8.c.o
+[ 49%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-dwconv/gen/qu8-dwconv-9p16c-minmax-fp32-avx-mul16.c.o
+[ 49%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-dwconv/gen/qu8-dwconv-9p8c-minmax-fp32-sse2-mul16.c.o
+[ 49%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-dwconv/gen/qu8-dwconv-9p16c-minmax-fp32-avx2-mul32.c.o
+[ 49%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-dwconv/gen/qu8-dwconv-25p32c-minmax-fp32-avx512skx-mul32.c.o
+[ 49%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-dwconv/gen/qu8-dwconv-9p8c-minmax-fp32-sse41-mul16.c.o
+[ 49%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-gemm/gen/qu8-gemm-1x16c8-minmax-fp32-avx512skx-prfm.c.o
+[ 49%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-gemm/gen/qu8-gemm-3x4-minmax-fp32-scalar-lrintf.c.o
+[ 49%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-gemm/gen/qu8-gemm-1x4-minmax-fp32-scalar-lrintf.c.o
+[ 49%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-dwconv/gen/qu8-dwconv-25p2c-minmax-fp32-scalar-lrintf.c.o
+[ 49%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-f32-vcvt/gen/qu8-f32-vcvt-avx-u32.c.o
+[ 49%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-f32-vcvt/gen/qu8-f32-vcvt-sse41-u16.c.o
+[ 49%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-f32-vcvt/gen/qu8-f32-vcvt-avx2-u16.c.o
+[ 50%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-gemm/gen/qu8-gemm-7x16c8-minmax-fp32-avx512skx-prfm.c.o
+[ 50%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-gemm/gen/qu8-gemm-2x4c8-minmax-fp32-avx-ld128.c.o
+[ 50%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-gemm/gen/qu8-gemm-1x4c8-minmax-fp32-sse41-ld64.c.o
+[ 50%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-gemm/gen/qu8-gemm-1x8c8-minmax-fp32-avx2.c.o
+[ 50%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-gemm/gen/qu8-gemm-1x4c8-minmax-fp32-avx-ld128.c.o
+[ 50%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-gemm/gen/qu8-gemm-1x4c8-minmax-fp32-sse2-ld64.c.o
+[ 51%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-dwconv/gen/qu8-dwconv-9p1c-minmax-fp32-scalar-fmagic.c.o
+[ 51%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-gemm/gen/qu8-gemm-3x8c8-minmax-fp32-avx2.c.o
+[ 51%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-gemm/gen/qu8-gemm-3x4c8-minmax-fp32-sse2-ld64.c.o
+[ 51%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-igemm/gen/qu8-igemm-1x16c8-minmax-fp32-avx512skx-prfm.c.o
+[ 51%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-gemm/gen/qu8-gemm-3x4c8-minmax-fp32-sse41-ld64.c.o
+[ 51%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-dwconv/gen/qu8-dwconv-25p1c-minmax-fp32-scalar-fmagic.c.o
+[ 51%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-f32-vcvt/gen/qu8-f32-vcvt-avx512skx-u32.c.o
+[ 51%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-dwconv/gen/qu8-dwconv-25p8c-minmax-fp32-sse2-mul16.c.o
+[ 51%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-igemm/gen/qu8-igemm-1x4-minmax-fp32-scalar-lrintf.c.o
+[ 51%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-f32-vcvt/gen/qu8-f32-vcvt-scalar-u4.c.o
+[ 51%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-igemm/gen/qu8-igemm-3x4-minmax-fp32-scalar-lrintf.c.o
+[ 51%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-igemm/gen/qu8-igemm-1x4c8-minmax-fp32-sse41-ld64.c.o
+[ 51%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-igemm/gen/qu8-igemm-1x8c8-minmax-fp32-avx2.c.o
+[ 51%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-igemm/gen/qu8-igemm-1x4c8-minmax-fp32-avx-ld128.c.o
+[ 51%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-dwconv/gen/qu8-dwconv-9p32c-minmax-fp32-avx512skx-mul32.c.o
+[ 51%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-f32-vcvt/gen/qu8-f32-vcvt-sse2-u32.c.o
+[ 51%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-igemm/gen/qu8-igemm-3x4c8-minmax-fp32-sse41-ld64.c.o
+[ 51%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-igemm/gen/qu8-igemm-1x4c8-minmax-fp32-sse2-ld64.c.o
+[ 51%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-igemm/gen/qu8-igemm-3x4c8-minmax-fp32-sse2-ld64.c.o
+[ 51%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-rdsum/gen/qu8-rdsum-scalar.c.o
+[ 51%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-igemm/gen/qu8-igemm-2x4c8-minmax-fp32-avx-ld128.c.o
+[ 51%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-igemm/gen/qu8-igemm-3x8c8-minmax-fp32-avx2.c.o
+[ 51%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-igemm/gen/qu8-igemm-7x16c8-minmax-fp32-avx512skx-prfm.c.o
+[ 51%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-rsum/gen/qu8-rsum-scalar-u4.c.o
+[ 51%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-rsum/gen/qu8-rsum-avx2-u64-acc2.c.o
+[ 51%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-rdsum/gen/qu8-rdsum-7p7x-ssse3-u64.c.o
+[ 51%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vadd/gen/qu8-vadd-minmax-avx2-mul32-ld64-u16.c.o
+[ 51%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-rsum/gen/qu8-rsum-sse2-u32-acc2.c.o
+[ 52%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vadd/gen/qu8-vadd-minmax-scalar-u1.c.o
+[ 52%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vadd/gen/qu8-vadd-minmax-avx-mul32-ld32-u8.c.o
+[ 52%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vadd/gen/qu8-vadd-minmax-avx512skx-mul32-ld128-u16.c.o
+[ 52%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vadd/gen/qu8-vadd-minmax-scalar-u4.c.o
+[ 52%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vadd/gen/qu8-vadd-minmax-sse41-mul16-ld64-u8.c.o
+[ 52%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vadd/gen/qu8-vadd-minmax-sse2-mul16-ld64-u8.c.o
+[ 52%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vaddc/gen/qu8-vaddc-minmax-sse2-mul16-ld64-u8.c.o
+[ 52%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vaddc/gen/qu8-vaddc-minmax-sse41-mul16-ld64-u8.c.o
+[ 52%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vaddc/gen/qu8-vaddc-minmax-avx-mul32-ld32-u8.c.o
+[ 52%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vcvt/gen/qu8-vcvt-sse41-u32.c.o
+[ 52%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vaddc/gen/qu8-vaddc-minmax-scalar-u4.c.o
+[ 52%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vcvt/gen/qu8-vcvt-avx-u32.c.o
+[ 52%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vaddc/gen/qu8-vaddc-minmax-avx2-mul32-ld64-u16.c.o
+[ 52%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vcvt/gen/qu8-vcvt-sse2-u32.c.o
+[ 52%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vlrelu/gen/qu8-vlrelu-scalar-andxor-u4.c.o
+[ 52%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vcvt/gen/qu8-vcvt-scalar-u4.c.o
+[ 52%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vlrelu/gen/qu8-vlrelu-avx2-u32.c.o
+[ 52%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vcvt/gen/qu8-vcvt-avx2-u32.c.o
+[ 52%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vaddc/gen/qu8-vaddc-minmax-scalar-u1.c.o
+[ 52%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vcvt/gen/qu8-vcvt-ssse3-u32.c.o
+[ 52%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vlrelu/gen/qu8-vlrelu-sse2-u32.c.o
+[ 52%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vaddc/gen/qu8-vaddc-minmax-avx512skx-mul32-ld128-u16.c.o
+[ 52%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vlrelu/gen/qu8-vlrelu-avx-u32.c.o
+[ 52%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vmul/gen/qu8-vmul-minmax-fp32-avx-mul16-ld64-u16.c.o
+[ 53%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vlrelu/gen/qu8-vlrelu-sse41-u32.c.o
+[ 53%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vlrelu/gen/qu8-vlrelu-ssse3-u32.c.o
+[ 53%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vmulc/gen/qu8-vmulc-minmax-fp32-scalar-u4.c.o
+[ 53%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vmul/gen/qu8-vmul-minmax-fp32-scalar-u4.c.o
+[ 53%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vmul/gen/qu8-vmul-minmax-fp32-sse2-mul16-ld64-u8.c.o
+[ 53%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vmulc/gen/qu8-vmulc-minmax-fp32-sse41-mul16-ld64-u16.c.o
+[ 53%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vmul/gen/qu8-vmul-minmax-fp32-sse41-mul16-ld64-u16.c.o
+[ 53%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vmulc/gen/qu8-vmulc-minmax-fp32-avx-mul16-ld64-u16.c.o
+[ 53%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vmulc/gen/qu8-vmulc-minmax-fp32-sse2-mul16-ld64-u8.c.o
+[ 53%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/s8-ibilinear/gen/s8-ibilinear-scalar-u1.c.o
+[ 53%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/s8-ibilinear/gen/s8-ibilinear-sse2-u8.c.o
+[ 53%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vprelu/gen/qu8-vprelu-avx2-u16.c.o
+[ 53%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vprelu/gen/qu8-vprelu-scalar-u8.c.o
+[ 53%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/s8-maxpool/gen/s8-maxpool-9p-minmax-scalar-u1.c.o
+[ 53%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vpreluc/gen/qu8-vpreluc-avx2-u16.c.o
+[ 53%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vpreluc/gen/qu8-vpreluc-scalar-u8.c.o
+[ 53%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/s8-maxpool/gen/s8-maxpool-9p-minmax-sse41-u16.c.o
+[ 53%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vrpreluc/gen/qu8-vrpreluc-scalar-u8.c.o
+[ 53%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/s8-ibilinear/gen/s8-ibilinear-sse41-u16.c.o
+[ 53%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/qu8-vrpreluc/gen/qu8-vrpreluc-avx2-u16.c.o
+[ 54%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/s8-rdminmax/gen/s8-rdmax-2p2x-scalar-c2.c.o
+[ 54%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/s8-rminmax/gen/s8-rmax-scalar-u2-acc2.c.o
+[ 54%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/s8-rdminmax/gen/s8-rdmin-2p2x-scalar-c2.c.o
+[ 54%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/s8-rminmax/gen/s8-rmax-sse41-u32-acc2.c.o
+[ 54%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/s8-rdminmax/gen/s8-rdmax-2p2x-sse41-c32.c.o
+[ 54%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/s8-rdminmax/gen/s8-rdmin-2p2x-sse41-c32.c.o
+[ 54%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/s8-rminmax/gen/s8-rminmax-sse41-u32-acc2.c.o
+[ 55%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/u8-rdminmax/gen/u8-rdmax-2p2x-sse2-c32.c.o
+[ 55%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/u8-rminmax/gen/u8-rmax-sse2-u32-acc2.c.o
+[ 55%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/u8-rminmax/gen/u8-rmax-scalar-u2-acc2.c.o
+[ 55%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/s8-vclamp/s8-vclamp-avx512skx-u256.c.o
+[ 55%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/s8-vclamp/s8-vclamp-avx2-u128.c.o
+[ 55%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/u8-rminmax/gen/u8-rmin-sse2-u32-acc2.c.o
+[ 55%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/s8-rminmax/gen/s8-rmin-scalar-u2-acc2.c.o
+[ 55%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/u8-rdminmax/gen/u8-rdmax-2p2x-scalar-c2.c.o
+[ 55%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/u8-rdminmax/gen/u8-rdmin-2p2x-sse2-c32.c.o
+[ 55%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/u8-maxpool/gen/u8-maxpool-9p-minmax-sse2-u16.c.o
+[ 55%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/s8-rminmax/gen/s8-rminmax-scalar-u2-acc2.c.o
+[ 55%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/u8-rminmax/gen/u8-rmin-scalar-u2-acc2.c.o
+[ 55%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/u8-rminmax/gen/u8-rminmax-scalar-u2-acc2.c.o
+[ 55%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/u8-vclamp/u8-vclamp-avx512skx-u256.c.o
+[ 55%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/u8-rdminmax/gen/u8-rdmin-2p2x-scalar-c2.c.o
+[ 55%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/s8-vclamp/s8-vclamp-sse2-u64.c.o
+[ 55%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/s8-vclamp/s8-vclamp-sse41-u64.c.o
+[ 55%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/u8-vclamp/u8-vclamp-scalar-u4.c.o
+[ 55%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/u8-vclamp/u8-vclamp-avx2-u128.c.o
+[ 55%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x16-transposec/gen/x16-transposec-2x4-scalar-int.c.o
+[ 55%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/u8-ibilinear/gen/u8-ibilinear-sse2-u8.c.o
+[ 55%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x16-transposec/gen/x16-transposec-16x16-reuse-switch-avx2.c.o
+[ 55%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x24-transposec/x24-transposec-4x4-ssse3.c.o
+[ 56%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x32-packw/gen/x32-packw-x16-gemm-gio-avx-u8.c.o
+[ 56%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/u8-ibilinear/gen/u8-ibilinear-sse41-u16.c.o
+[ 56%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/u8-lut32norm/u8-lut32norm-scalar.c.o
+[ 56%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/u8-rminmax/gen/u8-rminmax-sse2-u32-acc2.c.o
+[ 55%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x16-packw/gen/x16-packw-x16-gemm-goi-avx2-u16-prfm.c.o
+[ 56%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/u8-maxpool/gen/u8-maxpool-9p-minmax-scalar-u1.c.o
+[ 55%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x16-x32-packw/gen/x16-x32-packw-x32c2-gemm-gio-scalar.c.o
+[ 56%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x32-packw/gen/x32-packw-x16-gemm-gio-avx512f-u8.c.o
+[ 55%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/s8-rminmax/gen/s8-rmin-sse41-u32-acc2.c.o
+[ 56%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x16-x32-packw/gen/x16-x32-packw-x32c2-gemm-goi-scalar.c.o
+[ 55%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/u8-vclamp/u8-vclamp-sse2-u64.c.o
+[ 56%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/u8-ibilinear/gen/u8-ibilinear-scalar-u1.c.o
+[ 56%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x16-transposec/gen/x16-transposec-8x8-reuse-multi-sse2.c.o
+[ 56%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/s8-vclamp/s8-vclamp-scalar-u4.c.o
+[ 56%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x24-transposec/gen/x24-transposec-1x2-scalar.c.o
+[ 56%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x32-packw/gen/x32-packw-x2-gemm-goi-scalar-float-u4.c.o
+[ 56%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x32-packw/gen/x32-packw-x2c4-gemm-goi-sse2-u4.c.o
+[ 56%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x32-packw/gen/x32-packw-x4-gemm-gio-scalar.c.o
+[ 56%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x32-packw/gen/x32-packw-x16s4-gemm-goi-avx-u4.c.o
+[ 56%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x32-packw/gen/x32-packw-x16-gemm-goi-avx-u4.c.o
+[ 56%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x32-packw/gen/x32-packw-x16-gemm-goi-avx512f-u4-prfm.c.o
+[ 56%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x32-packw/gen/x32-packw-x64-gemm-goi-scalar-int-u2.c.o
+[ 56%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x32-packw/gen/x32-packw-x2-gemm-gio-scalar.c.o
+[ 56%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x32-packw/gen/x32-packw-x32-gemm-goi-avx512f-u4-prfm.c.o
+[ 56%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x32-packw/gen/x32-packw-x32-gemm-goi-scalar-int-u2.c.o
+[ 56%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x32-packw/gen/x32-packw-x32-gemm-gio-avx512f-u8.c.o
+[ 56%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x32-transposec/gen/x32-transposec-2x4-scalar-int.c.o
+[ 56%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x32-packw/gen/x32-packw-x4-gemm-goi-scalar-float-u4.c.o
+[ 56%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x32-packw/gen/x32-packw-x8-gemm-gio-avx-u8.c.o
+[ 56%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x32-packw/gen/x32-packw-x8-gemm-goi-sse2-u4.c.o
+[ 56%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x32-packw/gen/x32-packw-x8-gemm-goi-avx-u4.c.o
+[ 57%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x32-unpool/x32-unpool-sse2.c.o
+[ 56%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x32-transposec/gen/x32-transposec-8x8-reuse-multi-avx.c.o
+[ 57%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x64-transposec/gen/x64-transposec-4x2-scalar-int.c.o
+[ 57%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x8-lut/gen/x8-lut-avx-u64.c.o
+[ 57%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x64-transposec/gen/x64-transposec-2x2-multi-mov-sse2.c.o
+[ 57%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x32-unpool/x32-unpool-scalar.c.o
+[ 57%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x8-lut/gen/x8-lut-avx2-u128.c.o
+[ 57%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x32-transposec/x32-transposec-4x4-sse.c.o
+[ 57%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x8-lut/gen/x8-lut-avx512vbmi-vpermx2b-u128.c.o
+[ 57%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x8-lut/gen/x8-lut-avx512skx-vpshufb-u64.c.o
+[ 57%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x64-transposec/gen/x64-transposec-4x4-reuse-multi-avx.c.o
+[ 57%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x8-lut/gen/x8-lut-scalar-u4.c.o
+[ 57%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x8-packw/gen/x8-packw-x8-gemm-goi-scalar-u2.c.o
+[ 57%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x8-packw/gen/x8-packw-x16-gemm-goi-scalar-u2.c.o
+[ 57%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x8-transposec/gen/x8-transposec-16x16-reuse-mov-sse2.c.o
+[ 57%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x8-packw/gen/x8-packw-x32-gemm-goi-scalar-u2.c.o
+[ 57%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x8-packq/x8-packq-scalar-f32qp8-u1.c.o
+[ 57%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x8-packw/gen/x8-packw-x4-gemm-goi-scalar-u2.c.o
+[ 57%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x8-transposec/gen/x8-transposec-2x4-scalar-int.c.o
+[ 57%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/xx-fill/xx-fill-sse2-u64.c.o
+[ 57%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/tables/exp2-k-over-64.c.o
+[ 57%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/xx-transposev/xx-transposev-1x1-scalar-memcpy.c.o
+[ 57%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/xx-pad/xx-pad-p16-sse2-u16.c.o
+[ 57%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/xx-copy/xx-copy-scalar-memcpy.c.o
+[ 57%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/x8-transposec/gen/x8-transposec-32x32-reuse-switch-avx2.c.o
+[ 58%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/xx-pad/xx-pad-p4-scalar-u16.c.o
+[ 58%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/xx-fill/xx-fill-scalar-u16.c.o
+[ 58%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/tables/exp2minus-k-over-4.c.o
+[ 58%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/tables/exp2-k-over-2048.c.o
+[ 58%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/tables/exp2minus-k-over-16.c.o
+[ 58%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/tables/exp2minus-k-over-64.c.o
+[ 58%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/tables/exp2minus-k-over-8.c.o
+[ 58%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/tables/exp2minus-k-over-2048.c.o
+[ 58%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/tables/exp2minus-k-over-32.c.o
+[ 58%] Building C object backends/xnnpack/third-party/XNNPACK/CMakeFiles/xnnpack-microkernels-prod.dir/src/tables/vlog.c.o
+[ 58%] Built target xnnpack-packing
+/home/pe/project/executorch/extension/llm/tokenizers/third-party/sentencepiece/src/sentencepiece_processor.cc:121:10: error: no declaration matches ‘uint32_t sentencepiece::ImmutableSentencePieceText_ImmutableSentencePiece::id() const’
+  121 | uint32_t ImmutableSentencePieceText_ImmutableSentencePiece::id() const {
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/pe/project/executorch/extension/llm/tokenizers/third-party/sentencepiece/src/sentencepiece_processor.cc:121:10: note: no functions named ‘uint32_t sentencepiece::ImmutableSentencePieceText_ImmutableSentencePiece::id() const’
+/home/pe/project/executorch/extension/llm/tokenizers/third-party/sentencepiece/src/sentencepiece_processor.h:161:7: note: ‘class sentencepiece::ImmutableSentencePieceText_ImmutableSentencePiece’ defined here
+  161 | class ImmutableSentencePieceText_ImmutableSentencePiece {
+      |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/pe/project/executorch/extension/llm/tokenizers/third-party/sentencepiece/src/sentencepiece_processor.cc:125:10: error: no declaration matches ‘uint32_t sentencepiece::ImmutableSentencePieceText_ImmutableSentencePiece::begin() const’
+  125 | uint32_t ImmutableSentencePieceText_ImmutableSentencePiece::begin() const {
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/pe/project/executorch/extension/llm/tokenizers/third-party/sentencepiece/src/sentencepiece_processor.cc:125:10: note: no functions named ‘uint32_t sentencepiece::ImmutableSentencePieceText_ImmutableSentencePiece::begin() const’
+/home/pe/project/executorch/extension/llm/tokenizers/third-party/sentencepiece/src/sentencepiece_processor.h:161:7: note: ‘class sentencepiece::ImmutableSentencePieceText_ImmutableSentencePiece’ defined here
+  161 | class ImmutableSentencePieceText_ImmutableSentencePiece {
+      |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/pe/project/executorch/extension/llm/tokenizers/third-party/sentencepiece/src/sentencepiece_processor.cc:129:10: error: no declaration matches ‘uint32_t sentencepiece::ImmutableSentencePieceText_ImmutableSentencePiece::end() const’
+  129 | uint32_t ImmutableSentencePieceText_ImmutableSentencePiece::end() const {
+      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/pe/project/executorch/extension/llm/tokenizers/third-party/sentencepiece/src/sentencepiece_processor.cc:129:10: note: no functions named ‘uint32_t sentencepiece::ImmutableSentencePieceText_ImmutableSentencePiece::end() const’
+/home/pe/project/executorch/extension/llm/tokenizers/third-party/sentencepiece/src/sentencepiece_processor.h:161:7: note: ‘class sentencepiece::ImmutableSentencePieceText_ImmutableSentencePiece’ defined here
+  161 | class ImmutableSentencePieceText_ImmutableSentencePiece {
+      |       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+[ 58%] Linking CXX static library libexecutorch_core.a
+[ 58%] Built target executorch_core
+[ 58%] Linking CXX static library libabsl_demangle_internal.a
+[ 58%] Built target demangle_internal
+gmake[3]: *** [extension/llm/tokenizers/sp-build/src/CMakeFiles/sentencepiece-static.dir/build.make:569: extension/llm/tokenizers/sp-build/src/CMakeFiles/sentencepiece-static.dir/sentencepiece_processor.cc.o] Error 1
+gmake[2]: *** [CMakeFiles/Makefile2:7852: extension/llm/tokenizers/sp-build/src/CMakeFiles/sentencepiece-static.dir/all] Error 2
+[ 58%] Linking C static library libxnnpack-microkernels-prod.a
+[ 58%] Built target xnnpack-reference-ukernels
+[ 58%] Built target xnnpack-microkernels-prod
+[ 58%] Linking CXX static library libregex_lookahead.a
+[ 58%] Built target regex_lookahead
+gmake[1]: *** [Makefile:156: all] Error 2
+gmake[1]: Leaving directory '/home/pe/project/executorch/cmake-out'
+make: *** [Makefile:199: gemma3-vulkan] Error 2

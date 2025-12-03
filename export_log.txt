@@ -1,0 +1,57 @@
+Skipping import of cpp extensions due to incompatible torch version 2.9.1+cu128 for torchao version 0.14.0         Please see GitHub issue #2919 for more info
+DEBUG: Registering transfer ops including index_put
+DEBUG: Registering transfer ops including index_put
+DEBUG: Registering transfer ops including index_put
+DEBUG: Registering transfer ops including index_put
+DEBUG: Registering transfer ops including index_put
+DEBUG: Registering transfer ops including index_put
+INFO:__main__:Loading model google/gemma-3-4b-it...
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  4.75it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  5.80it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  5.61it/s]
+INFO:__main__:Identified encoder: vision_tower
+`torch_dtype` is deprecated! Use `dtype` instead!
+INFO:root:Metadata to be recorded in PTE: {'get_dtype': 5, 'get_bos_id': 2, 'get_eos_id': 1, 'get_head_dim': 320.0, 'get_n_kv_heads': 4, 'get_n_layers': 34, 'get_vocab_size': 262208, 'get_max_batch_size': 1, 'get_max_seq_len': 2048, 'use_kv_cache': True, 'sliding_window': 1024, 'use_sdpa_with_kv_cache': False, 'enable_dynamic_shape': True, 'modality': 'vision', 'vision_token_id': 262144}
+INFO:__main__:Exporting to ExportedProgram...
+INFO:root:Using sliding window as max sequence length in export.
+I tokenizers:regex.cpp:27] Registering override fallback regex
+INFO:root:Exporting decoder using inputs_embeds(torch.Size([1, 3, 2560])), cache_position(torch.Size([3]))=tensor([0, 1, 2]), dynamic_shapes={'inputs_embeds': {1: Dim('seq_length_dim', min=0, max=1023)}, 'cache_position': {0: Dim('seq_length_dim', min=0, max=1023)}}
+/home/pe/miniconda3/envs/executorch/lib/python3.11/site-packages/torch/_dynamo/output_graph.py:1711: UserWarning: While exporting, we found certain side effects happened in the model.forward. Here are the list of potential sources you can double check: ["L['self'].cache.layers[0]", "L['self'].cache.layers[1]", "L['self'].cache.layers[2]", "L['self'].cache.layers[3]", "L['self'].cache.layers[4]", "L['self'].cache.layers[6]", "L['self'].cache.layers[7]", "L['self'].cache.layers[8]", "L['self'].cache.layers[9]", "L['self'].cache.layers[10]", "L['self'].cache.layers[12]", "L['self'].cache.layers[13]", "L['self'].cache.layers[14]", "L['self'].cache.layers[15]", "L['self'].cache.layers[16]", "L['self'].cache.layers[18]", "L['self'].cache.layers[19]", "L['self'].cache.layers[20]", "L['self'].cache.layers[21]", "L['self'].cache.layers[22]", "L['self'].cache.layers[24]", "L['self'].cache.layers[25]", "L['self'].cache.layers[26]", "L['self'].cache.layers[27]", "L['self'].cache.layers[28]", "L['self'].cache.layers[30]", "L['self'].cache.layers[31]", "L['self'].cache.layers[32]", "L['self'].cache.layers[33]"]
+  warnings.warn(
+INFO:root:Exporting token embeddings using input_ids(torch.Size([1, 3])), dynamic_shapes=({1: Dim('seq_length_dim', min=0, max=1023)},)
+Fetching 2 files:   0%|          | 0/2 [00:00<?, ?it/s]Fetching 2 files: 100%|██████████| 2/2 [00:00<00:00, 5326.10it/s]
+Using a slow image processor as `use_fast` is unset and a slow processor was saved with this model. `use_fast=True` will be the default behavior in v4.52, even if the model was saved with a slow processor. This will result in minor differences in outputs. You'll still be able to use a slow processor with `use_fast=False`.
+INFO:root:Exporting vision encoder using input_features(torch.Size([1, 3, 896, 896])), dynamic_shapes=None
+INFO:__main__:Lowering to ExecuTorch with Vulkan backend...
+Traceback (most recent call last):
+  File "/home/pe/project/executorch/examples/models/gemma3/export_gemma3_vulkan.py", line 184, in <module>
+    export_gemma3_vulkan(args.model, args.output_dir, args.dtype)
+  File "/home/pe/project/executorch/examples/models/gemma3/export_gemma3_vulkan.py", line 159, in export_gemma3_vulkan
+    et_prog = to_edge_transform_and_lower(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pe/miniconda3/envs/executorch/lib/python3.11/site-packages/executorch/exir/program/_program.py", line 114, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pe/miniconda3/envs/executorch/lib/python3.11/site-packages/executorch/exir/program/_program.py", line 1355, in to_edge_transform_and_lower
+    edge_manager = _gen_edge_manager_for_partitioners(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pe/miniconda3/envs/executorch/lib/python3.11/site-packages/executorch/exir/program/_program.py", line 1226, in _gen_edge_manager_for_partitioners
+    program = program.run_decompositions(_default_decomposition_table())
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pe/miniconda3/envs/executorch/lib/python3.11/site-packages/torch/export/exported_program.py", line 124, in wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/home/pe/miniconda3/envs/executorch/lib/python3.11/site-packages/torch/export/exported_program.py", line 1484, in run_decompositions
+    return _decompose_exported_program(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pe/miniconda3/envs/executorch/lib/python3.11/site-packages/torch/export/exported_program.py", line 967, in _decompose_exported_program
+    ) = _decompose_and_get_gm_with_new_signature_constants(
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/pe/miniconda3/envs/executorch/lib/python3.11/site-packages/torch/export/exported_program.py", line 449, in _decompose_and_get_gm_with_new_signature_constants
+    with (
+  File "/home/pe/miniconda3/envs/executorch/lib/python3.11/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/home/pe/miniconda3/envs/executorch/lib/python3.11/site-packages/torch/export/exported_program.py", line 217, in _override_composite_implicit_decomp
+    op_overload.py_impl(torch._C.DispatchKey.CompositeImplicitAutograd)(
+  File "/home/pe/miniconda3/envs/executorch/lib/python3.11/site-packages/torch/_ops.py", line 156, in inner
+    self._dispatch_cache.clear()
+KeyboardInterrupt

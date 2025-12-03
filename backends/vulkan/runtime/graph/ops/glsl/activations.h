@@ -54,3 +54,37 @@ vec4 leaky_relu(vec4 tex, float negative_slope) {
       leaky_relu(tex.z, negative_slope),
       leaky_relu(tex.w, negative_slope));
 }
+
+float logical_not(float x) {
+  return (x == 0.0) ? 1.0 : 0.0;
+}
+
+vec4 logical_not(vec4 tex) {
+  return vec4(equal(tex, vec4(0.0)));
+}
+
+// For bool/uint8 support
+uint logical_not(uint x) {
+  return uint(x == 0);
+}
+
+uvec4 logical_not(uvec4 tex) {
+  return uvec4(equal(tex, uvec4(0)));
+}
+
+// eq_scalar implementation
+float eq_scalar(float x, float scalar) {
+  return (x == scalar) ? 1.0 : 0.0;
+}
+
+vec4 eq_scalar(vec4 tex, float scalar) {
+  return vec4(equal(tex, vec4(scalar)));
+}
+
+uint eq_scalar(uint x, float scalar) {
+  return uint(x == uint(scalar));
+}
+
+uvec4 eq_scalar(uvec4 tex, float scalar) {
+  return uvec4(equal(tex, uvec4(uint(scalar))));
+}

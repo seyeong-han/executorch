@@ -356,11 +356,33 @@ DEFINE_REDUCE_FN(mean, 4)
 DEFINE_REDUCE_FN(amax, 3)
 DEFINE_REDUCE_FN(amin, 3)
 
+// any reduction - checks if any element is non-zero along dimension
+// This has different argument structure: any(input, dim, keepdim, out)
+void any_dim(ComputeGraph& graph, const std::vector<ValueRef>& args) {
+  const ValueRef input = args[0];
+  const ValueRef dim_ref = args[1];
+  const ValueRef keepdim = args[2];
+  const ValueRef out = args[3];
+
+  int64_t dim_val = graph.extract_scalar<int64_t>(dim_ref);
+  int64_t ndim = graph.dim_of(input);
+
+  // For per-row reduction (last dimension)
+  if ((dim_val == -1 || dim_val == ndim - 1) &&
+      graph.is_buffer_storage(input)) {
+    return add_reduce_per_row_node(graph, input, keepdim, out, "any");
+  }
+
+  const ValueRef dim_normalized = graph.get_or_add_value_for_int(dim_val);
+  return add_reduce_node(graph, input, dim_normalized, out, "any");
+}
+
 REGISTER_OPERATORS {
   VK_REGISTER_OP(aten.sum.dim_IntList, sum);
   VK_REGISTER_OP(aten.mean.dim, mean);
   VK_REGISTER_OP(aten.amax.default, amax);
   VK_REGISTER_OP(aten.amin.default, amin);
+  VK_REGISTER_OP(aten.any.dim, any_dim);
 }
 
 } // namespace vkcompute

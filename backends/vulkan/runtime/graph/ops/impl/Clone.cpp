@@ -158,8 +158,36 @@ void clone(ComputeGraph& graph, const std::vector<ValueRef>& args) {
 // a "copy" mechanism if there is no alternative (e.g. during direct
 // ComputeGraph manipulation, we need to make a copy of a Tensor).
 
+void alias_copy(ComputeGraph& graph, const std::vector<ValueRef>& args) {
+  // alias_copy is functionally the same as clone - it creates a copy
+  const ValueRef src = args[0];
+  const ValueRef dst = args[1];
+
+  const utils::StorageType src_storage = graph.storage_type_of(src);
+  const utils::StorageType dst_storage = graph.storage_type_of(dst);
+  if (src_storage == utils::kTexture3D && dst_storage == utils::kTexture3D) {
+    if (graph.hashed_layout_of(src) == graph.hashed_layout_of(dst)) {
+      return add_clone_node(graph, src, dst);
+    } else {
+      return add_view_node(graph, src, kDummyValueRef, dst);
+    }
+  }
+  if (src_storage == utils::kTexture3D && dst_storage == utils::kBuffer) {
+    return add_image_to_buffer_node(graph, src, dst);
+  }
+  if (src_storage == utils::kBuffer && dst_storage == utils::kTexture3D) {
+    return add_buffer_to_image_node(graph, src, dst);
+  }
+
+  std::vector<ValueRef> extra_args = {};
+  // Buffer to buffer copy
+  return add_view_copy_buffer_node(
+      graph, src, dst, extra_args, resize_clone_node);
+}
+
 REGISTER_OPERATORS {
   VK_REGISTER_OP(aten.clone.default, clone);
+  VK_REGISTER_OP(aten.alias_copy.default, alias_copy);
 }
 
 } // namespace vkcompute

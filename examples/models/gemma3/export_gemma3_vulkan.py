@@ -8,8 +8,9 @@ import json
 import torch
 from typing import Dict, Optional
 
-from transformers import AutoModelForPreTraining, AutoConfig, GenerationConfig
+from transformers import AutoModelForCausalLM, AutoConfig, GenerationConfig
 from optimum.exporters.executorch.integrations import (
+    CausalLMExportableModule,
     MultiModalTextToTextExportableModule,
 )
 from executorch.backends.vulkan.partitioner.vulkan_partitioner import VulkanPartitioner
@@ -70,7 +71,7 @@ def load_model(model_name_or_path, dtype="float32"):
 
     # Load model
     # Gemma 3 might need trust_remote_code=True
-    model = AutoModelForPreTraining.from_pretrained(
+    model = AutoModelForCausalLM.from_pretrained(
         model_name_or_path,
         dtype=dtype,
         config=config,
@@ -82,10 +83,10 @@ def load_model(model_name_or_path, dtype="float32"):
     model.generation_config = GenerationConfig(
         use_cache=True,
         cache_implementation="static",
-        max_length=2048,  # Default
+        max_length=1024,  # Use 1024 to satisfy model constraints
         cache_config={
             "batch_size": 1,
-            "max_cache_len": 2048,
+            "max_cache_len": 1024,
             "device": "cpu",
         },
     )
@@ -103,30 +104,49 @@ def load_model(model_name_or_path, dtype="float32"):
         # Optimum's logic uses _validate_multimodal_components.
         pass
 
-    # We need to identify encoder/decoder for MultiModalTextToTextExportableModule
-    # Let's use a simplified version or try to use optimum's function if importable.
-    # It was not easily importable as it was decorated.
-
-    # Let's rely on MultiModalTextToTextExportableModule to handle it if we pass the right args.
-    # It takes: model, modality, encoder_name, max_seq_len, processor_config, ...
-
-    # We need to find encoder_name.
-    encoder_name = "vision_tower"  # Likely for Gemma 3
-    if not hasattr(model, encoder_name):
-        # Try to find it
-        for name, module in model.named_children():
-            if "vision" in name or "visual" in name:
-                encoder_name = name
+    # Detect if model is multimodal or text-only
+    # Check config first - Gemma3Config (multimodal) vs Gemma3TextConfig (text-only)
+    is_multimodal = False
+    encoder_name = None
+    
+    # Check config type
+    config_name = type(config).__name__
+    if "Text" not in config_name and hasattr(config, "vision_config"):
+        is_multimodal = True
+    
+    # Also check for vision-related attributes in the model
+    # Search both direct children and nested modules
+    for name, module in model.named_children():
+        if "vision" in name.lower() or "visual" in name.lower():
+            encoder_name = name
+            is_multimodal = True
+            break
+    
+    # If not found in direct children, search deeper
+    if encoder_name is None:
+        for name, module in model.named_modules():
+            if "vision_tower" in name or "vision_model" in name:
+                # Get the top-level name
+                encoder_name = name.split(".")[0] if "." in name else name
+                is_multimodal = True
                 break
 
-    logger.info(f"Identified encoder: {encoder_name}")
-
-    return MultiModalTextToTextExportableModule(
-        model=model,
-        modality="vision",
-        encoder_name=encoder_name,
-        max_seq_len=2048,
-    )
+    if is_multimodal and encoder_name is not None:
+        # Multimodal model with vision encoder
+        logger.info(f"Detected multimodal model with encoder: {encoder_name}")
+        return MultiModalTextToTextExportableModule(
+            model=model,
+            modality="vision",
+            encoder_name=encoder_name,
+            max_seq_len=1024,  # Use 1024 to satisfy model constraints
+        )
+    else:
+        # Text-only model
+        logger.info("Detected text-only model, using CausalLMExportableModule")
+        return CausalLMExportableModule(
+            model=model,
+            max_seq_len=1024,  # Use 1024 to satisfy model constraints
+        )
 
 
 def export_gemma3_vulkan(model_id: str, output_dir: str, dtype: str):

@@ -32,3 +32,11 @@ reduce:
       INIT_ACCUM: first_val
       UPDATE_ACCUM: min(accum, new_val)
       POSTPROCESS: accum
+    - NAME: any
+      INIT_ACCUM: VEC4_T(0)
+      UPDATE_ACCUM: max(accum, abs(new_val))
+      POSTPROCESS: VEC4_T(notEqual(accum, VEC4_T(0)))
+      generate_variant_forall:
+        DTYPE:
+          - VALUE: float
+          - VALUE: half

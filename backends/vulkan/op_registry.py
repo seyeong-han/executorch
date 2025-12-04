@@ -275,8 +275,15 @@ def register_binary_op():
         exir_ops.edge.aten.pow.Tensor_Scalar,
         torch.ops.aten.pow.Tensor_Scalar,
         "aten::pow.Tensor_Scalar",
+        "aten.pow.Tensor_Scalar",
         exir_ops.edge.aten.mul.Scalar,
+        torch.ops.aten.mul.Scalar,
+        "aten::mul.Scalar",
+        "aten.mul.Scalar",
         exir_ops.edge.aten.eq.Scalar,
+        torch.ops.aten.eq.Scalar,
+        "aten::eq.Scalar",
+        "aten.eq.Scalar",
     ]
 )
 def register_binary_scalar_op():
@@ -305,6 +312,9 @@ def register_binary_scalar_op():
         exir_ops.edge.aten.round.default,
         exir_ops.edge.aten.leaky_relu.default,
         exir_ops.edge.aten.logical_not.default,
+        torch.ops.aten.logical_not.default,
+        "aten::logical_not.default",
+        "aten.logical_not.default",
     ]
 )
 def register_unary_op():
@@ -573,6 +583,9 @@ def pick_storage_for_reduce(node: torch.fx.Node):
         exir_ops.edge.aten.argmax.default,
         exir_ops.edge.aten.argmin.default,
         exir_ops.edge.aten.any.dim,
+        torch.ops.aten.any.dim,
+        "aten::any.dim",
+        "aten.any.dim",
     ]
 )
 def register_reduce_op():
@@ -771,6 +784,9 @@ def register_view_ops():
         exir_ops.edge.aten.permute_copy.default,
         exir_ops.edge.aten.gather.default,
         exir_ops.edge.aten.alias_copy.default,
+        torch.ops.aten.alias_copy.default,
+        "aten::alias_copy.default",
+        "aten.alias_copy.default",
     ]
 )
 def register_view_ops_with_buffer_meta():
@@ -810,7 +826,6 @@ def register_cat_op():
     ]
 )
 def register_transfer_ops():
-    print("DEBUG: Registering transfer ops including index_put")
     return OpFeatures(
         inputs_storage=utils.ANY_STORAGE,
         supports_resize=True,
@@ -834,7 +849,10 @@ def register_transfer_ops():
         exir_ops.edge.aten.ones.default,
         exir_ops.edge.aten.ones_like.default,
         exir_ops.edge.aten.scalar_tensor.default,
+        torch.ops.aten.scalar_tensor.default,
         "aten::scalar_tensor",
+        "aten::scalar_tensor.default",
+        "aten.scalar_tensor.default",
         exir_ops.edge.aten.upsample_nearest2d.vec,
         exir_ops.edge.aten.upsample_bilinear2d.vec,
         exir_ops.edge.aten.zeros.default,
@@ -860,7 +878,14 @@ def register_ported_op_all_packed_dims():
     )
 
 
-@update_features(exir_ops.edge.aten.where.self)
+@update_features(
+    [
+        exir_ops.edge.aten.where.self,
+        torch.ops.aten.where.self,
+        "aten::where.self",
+        "aten.where.self",
+    ]
+)
 def register_where_op():
     return OpFeatures(
         inputs_storage=utils.ANY_STORAGE,

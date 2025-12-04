@@ -10,7 +10,9 @@
 import ctypes
 import importlib.resources as _resources
 import json
+import math
 import os
+import re
 import tempfile
 from dataclasses import dataclass
 from typing import ClassVar, List
@@ -27,8 +29,35 @@ from executorch.exir._serialize._dataclass import _DataclassEncoder, _json_to_da
 from executorch.exir._serialize._flatbuffer import _flatc_compile, _flatc_decompile
 
 
+# Use values that are representable in float32 and have the same practical effect as inf
+# These are approximately FLT_MAX which is 3.4028235e+38
+_FLOAT_MAX = 3.4028235e+38
+_FLOAT_MIN = -3.4028235e+38
+
+
+def _sanitize_json_floats(json_str: str) -> str:
+    """Replace special float values in JSON string that are not valid JSON.
+    
+    Python's json.dumps with allow_nan=True produces:
+    - Infinity -> "Infinity" 
+    - -Infinity -> "-Infinity"
+    - NaN -> "NaN"
+    
+    These are not valid JSON, so we replace them with finite values.
+    """
+    # Replace -Infinity with a very large negative number
+    json_str = re.sub(r'(?<!["\w])-Infinity(?!["\w])', str(_FLOAT_MIN), json_str)
+    # Replace Infinity with a very large positive number  
+    json_str = re.sub(r'(?<!["\w-])Infinity(?!["\w])', str(_FLOAT_MAX), json_str)
+    # Replace NaN with 0.0
+    json_str = re.sub(r'(?<!["\w])NaN(?!["\w])', '0.0', json_str)
+    return json_str
+
+
 def convert_to_flatbuffer(vk_graph: VkGraph) -> bytes:
-    vk_graph_json = json.dumps(vk_graph, cls=_DataclassEncoder)
+    # Use allow_nan=True to let json.dumps handle inf/nan, then sanitize the output
+    vk_graph_json = json.dumps(vk_graph, cls=_DataclassEncoder, allow_nan=True)
+    vk_graph_json = _sanitize_json_floats(vk_graph_json)
 
     with tempfile.TemporaryDirectory() as d:
         schema_path = os.path.join(d, "schema.fbs")

@@ -93,4 +93,18 @@ void merge_accum_amin(inout Accum accum, const Accum other) {
   }
 }
 
+// Any (logical OR reduction - checks if any element is non-zero)
+
+void update_accum_any(inout Accum accum, T in_val, uint idx) {
+  if (ACCUM_T(in_val) != ACCUM_T(0)) {
+    accum.val = ACCUM_T(1);
+  }
+}
+
+void merge_accum_any(inout Accum accum, const Accum other) {
+  if (other.val != ACCUM_T(0)) {
+    accum.val = ACCUM_T(1);
+  }
+}
+
 #endif // REDUCE_OP_DEFS_GLSLH

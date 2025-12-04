@@ -1118,10 +1118,17 @@ class SPVGenerator:
             gen_file_meta[gen_out_path] = (file_changed, include_list)
 
         # Parallelize SPIR-V compilation to optimize build time
-        with ThreadPool(os.cpu_count()) as pool:
-            for spv_out_path, glsl_out_path in pool.map(
-                compile_spirv, self.output_file_map.items()
-            ):
+        # Fall back to single-threaded if multiprocessing fails (e.g., on macOS with security restrictions)
+        try:
+            with ThreadPool(os.cpu_count()) as pool:
+                for spv_out_path, glsl_out_path in pool.map(
+                    compile_spirv, self.output_file_map.items()
+                ):
+                    spv_to_glsl_map[spv_out_path] = glsl_out_path
+        except (PermissionError, OSError) as e:
+            print(f"Warning: Multiprocessing failed ({e}), falling back to single-threaded compilation")
+            for item in self.output_file_map.items():
+                spv_out_path, glsl_out_path = compile_spirv(item)
                 spv_to_glsl_map[spv_out_path] = glsl_out_path
 
         return spv_to_glsl_map

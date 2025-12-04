@@ -18,3 +18,5 @@ binary_scalar_buffer:
       - VALUE: int32
   shader_variants:
     - NAME: pow_scalar_buffer
+    - NAME: mul_scalar_buffer
+      OPERATOR: X * Y

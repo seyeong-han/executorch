@@ -18,3 +18,5 @@ binary_scalar_texture:
       - VALUE: int32
   shader_variants:
     - NAME: pow_scalar_texture3d
+    - NAME: mul_scalar_texture3d
+      OPERATOR: X * Y

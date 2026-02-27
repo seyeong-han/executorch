@@ -1,0 +1,77 @@
+{
+    "version": 6,
+    "configurePresets": [
+        {
+            "name": "qwen3-5-base",
+            "hidden": true,
+            "binaryDir": "${sourceDir}/../../../cmake-out/examples/models/qwen3_5",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_FIND_ROOT_PATH": "${sourceDir}/../../../cmake-out",
+                "CMAKE_PREFIX_PATH": "${sourceDir}/../../../cmake-out"
+            }
+        },
+        {
+            "name": "qwen3-5-cpu",
+            "displayName": "Qwen3.5 runner (CPU)",
+            "inherits": ["qwen3-5-base"]
+        },
+        {
+            "name": "qwen3-5-metal",
+            "displayName": "Qwen3.5 runner (Metal)",
+            "inherits": ["qwen3-5-base"],
+            "cacheVariables": {
+                "EXECUTORCH_BUILD_METAL": "ON"
+            },
+            "condition": {
+                "lhs": "${hostSystemName}",
+                "type": "equals",
+                "rhs": "Darwin"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "qwen3-5-cpu",
+            "displayName": "Build Qwen3.5 runner (CPU)",
+            "configurePreset": "qwen3-5-cpu",
+            "configuration": "Release"
+        },
+        {
+            "name": "qwen3-5-metal",
+            "displayName": "Build Qwen3.5 runner (Metal)",
+            "configurePreset": "qwen3-5-metal",
+            "configuration": "Release"
+        }
+    ],
+    "workflowPresets": [
+        {
+            "name": "qwen3-5-cpu",
+            "displayName": "Configure and build Qwen3.5 runner (CPU)",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "qwen3-5-cpu"
+                },
+                {
+                    "type": "build",
+                    "name": "qwen3-5-cpu"
+                }
+            ]
+        },
+        {
+            "name": "qwen3-5-metal",
+            "displayName": "Configure and build Qwen3.5 runner (Metal)",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "qwen3-5-metal"
+                },
+                {
+                    "type": "build",
+                    "name": "qwen3-5-metal"
+                }
+            ]
+        }
+    ]
+}

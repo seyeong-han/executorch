@@ -308,8 +308,24 @@ class ET_EXPERIMENTAL MetalBackend final
     // Free the buffer immediately after writing to disk
     aoti_metal_buffer->Free();
 
+    // Ensure process-level shim symbols are visible to dlsym(RTLD_DEFAULT, ...)
+    // calls inside generated AOTI delegate code on macOS.
+    void* self_handle = dlopen(nullptr, RTLD_NOW | RTLD_GLOBAL);
+    ET_CHECK_OR_RETURN_ERROR(
+        self_handle != nullptr,
+        AccessFailed,
+        "Failed to load process handle for global symbol visibility: %s",
+        dlerror());
+    ET_LOG(
+        Info,
+        "MetalBackend::init - dlsym(aoti_torch_delete_tensor_object)=%p dlsym(_aoti_torch_delete_tensor_object)=%p",
+        dlsym(RTLD_DEFAULT, "aoti_torch_delete_tensor_object"),
+        dlsym(RTLD_DEFAULT, "_aoti_torch_delete_tensor_object"));
+
     // Load the ELF using dlopen
-    void* so_handle = dlopen(so_path.c_str(), RTLD_LAZY | RTLD_LOCAL);
+    // Use RTLD_GLOBAL so the AOTI shim symbol lookups performed by generated
+    // code can resolve process-level shim exports reliably on macOS.
+    void* so_handle = dlopen(so_path.c_str(), RTLD_LAZY | RTLD_GLOBAL);
     ET_CHECK_OR_RETURN_ERROR(
         so_handle != nullptr,
         AccessFailed,
@@ -421,6 +437,13 @@ class ET_EXPERIMENTAL MetalBackend final
 
     size_t n_outputs;
     handle->get_num_outputs(handle->container_handle, &n_outputs);
+    ET_LOG(
+        Info,
+        "MetalBackend::execute - method=%s n_inputs=%zu n_outputs=%zu args=%zu",
+        context.get_method_name() ? context.get_method_name() : "<unknown>",
+        n_inputs,
+        n_outputs,
+        args.size());
 
     ET_LOG(Debug, "MetalBackend n_outputs %zd generated", n_outputs);
 
@@ -452,6 +475,7 @@ class ET_EXPERIMENTAL MetalBackend final
 
     // Process input tensors: ExecuTorch provides CPU tensors, create GPU
     // copies
+    ET_LOG(Info, "MetalBackend::execute - preparing GPU input tensors");
     for (int i = 0; i < n_inputs; i++) {
       ET_LOG(Debug, "Processing input %d from args to inputs vector", i);
       ET_LOG(
@@ -530,10 +554,11 @@ class ET_EXPERIMENTAL MetalBackend final
       ET_LOG(Debug, "Successfully copied input %d from CPU to GPU", i);
     }
 
-    ET_LOG(Debug, "MetalBackend GPU inputs generated");
+    ET_LOG(Info, "MetalBackend::execute - prepared all GPU input tensors");
 
     // Process output tensors: create GPU counterparts for ExecuTorch CPU
     // tensors
+    ET_LOG(Info, "MetalBackend::execute - preparing GPU output tensors");
     for (int i = 0; i < n_outputs; i++) {
       // Get output tensor dimensions from ExecuTorch CPU tensor
       auto cpu_output_tensor = &(args[i + n_inputs]->toTensor());
@@ -567,7 +592,7 @@ class ET_EXPERIMENTAL MetalBackend final
       ET_LOG(Debug, "Created GPU output tensor %d", i);
     }
 
-    ET_LOG(Debug, "MetalBackend output generated");
+    ET_LOG(Info, "MetalBackend::execute - prepared all GPU output tensors");
 
     // Log tensor handles before passing to AOTI container
     ET_LOG(Debug, "Passing to AOTInductorModelContainerRun:");
@@ -591,6 +616,7 @@ class ET_EXPERIMENTAL MetalBackend final
     }
 
     // Run AOTI container with GPU tensors
+    ET_LOG(Info, "MetalBackend::execute - invoking AOTI container run");
     AOTIRuntimeError error = handle->run(
         handle->container_handle,
         gpu_inputs.data(), // Use GPU input tensors
@@ -599,6 +625,7 @@ class ET_EXPERIMENTAL MetalBackend final
         n_outputs,
         nullptr, // Pass the actual Metal stream!
         nullptr); // proxy_executor_handle can remain nullptr
+    ET_LOG(Info, "MetalBackend::execute - AOTI container run returned");
 
     if (error != Error::Ok) {
       ET_LOG(

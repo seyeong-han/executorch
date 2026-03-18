@@ -17,6 +17,21 @@
       "inherits": [
         "qwen3-tts-base"
       ]
+    },
+    {
+      "name": "qwen3-tts-metal",
+      "displayName": "Qwen3-TTS runner (Metal)",
+      "inherits": [
+        "qwen3-tts-base"
+      ],
+      "cacheVariables": {
+        "EXECUTORCH_BUILD_METAL": "ON"
+      },
+      "condition": {
+        "lhs": "${hostSystemName}",
+        "type": "equals",
+        "rhs": "Darwin"
+      }
     }
   ],
   "buildPresets": [
@@ -24,6 +39,14 @@
       "name": "qwen3-tts-cpu",
       "displayName": "Build Qwen3-TTS runner (CPU)",
       "configurePreset": "qwen3-tts-cpu",
+      "targets": [
+        "qwen3_tts_runner"
+      ]
+    },
+    {
+      "name": "qwen3-tts-metal",
+      "displayName": "Build Qwen3-TTS runner (Metal)",
+      "configurePreset": "qwen3-tts-metal",
       "targets": [
         "qwen3_tts_runner"
       ]
@@ -41,6 +64,20 @@
         {
           "type": "build",
           "name": "qwen3-tts-cpu"
+        }
+      ]
+    },
+    {
+      "name": "qwen3-tts-metal",
+      "displayName": "Configure and build Qwen3-TTS runner (Metal)",
+      "steps": [
+        {
+          "type": "configure",
+          "name": "qwen3-tts-metal"
+        },
+        {
+          "type": "build",
+          "name": "qwen3-tts-metal"
         }
       ]
     }

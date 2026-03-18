@@ -80,6 +80,25 @@ target_include_directories(qwen3_tts_runner PUBLIC ${_common_include_directories
 target_link_libraries(qwen3_tts_runner PUBLIC ${_link_libraries})
 target_compile_options(qwen3_tts_runner PUBLIC ${_common_compile_options})
 
+if(APPLE)
+  if(EXISTS "/opt/homebrew/opt/libomp/lib/libomp.dylib")
+    set(_preferred_libomp "/opt/homebrew/opt/libomp/lib/libomp.dylib")
+  elseif(EXISTS "/usr/local/opt/libomp/lib/libomp.dylib")
+    set(_preferred_libomp "/usr/local/opt/libomp/lib/libomp.dylib")
+  endif()
+
+  if(DEFINED _preferred_libomp)
+    add_custom_command(
+      TARGET qwen3_tts_runner
+      POST_BUILD
+      COMMAND install_name_tool -change /opt/llvm-openmp/lib/libomp.dylib
+              ${_preferred_libomp} $<TARGET_FILE:qwen3_tts_runner>
+      COMMENT "Rewriting libomp load path for local Homebrew layout"
+      VERBATIM
+    )
+  endif()
+endif()
+
 if(MSVC AND EXECUTORCH_BUILD_CUDA)
   add_custom_command(
     TARGET qwen3_tts_runner

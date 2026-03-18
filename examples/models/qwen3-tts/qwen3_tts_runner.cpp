@@ -89,6 +89,10 @@ Qwen3TTSRunner::Qwen3TTSRunner(
   if (sample_rate_result.ok()) {
     output_sample_rate_ = static_cast<int>(sample_rate_result.get()[0].toInt());
   }
+  auto upsample_result = module_->execute("decode_upsample_rate", empty);
+  if (upsample_result.ok()) {
+    decode_upsample_rate_ = static_cast<int>(upsample_result.get()[0].toInt());
+  }
   auto fixed_len_result = module_->execute("fixed_codes_len", empty);
   if (fixed_len_result.ok()) {
     fixed_codes_len_ = static_cast<int>(fixed_len_result.get()[0].toInt());
@@ -96,8 +100,9 @@ Qwen3TTSRunner::Qwen3TTSRunner(
 
   ET_LOG(
       Info,
-      "Runner output_sample_rate=%d fixed_codes_len=%d",
+      "Runner output_sample_rate=%d decode_upsample_rate=%d fixed_codes_len=%d",
       output_sample_rate_,
+      decode_upsample_rate_,
       fixed_codes_len_);
 }
 
@@ -209,27 +214,43 @@ bool Qwen3TTSRunner::decode_codes(
       {1, effective_len, num_quantizers},
       ::executorch::aten::ScalarType::Long);
 
+  ET_LOG(
+      Info,
+      "Invoking decode_codes (codes_len=%d effective_len=%d num_quantizers=%d)",
+      static_cast<int>(codes_len),
+      static_cast<int>(effective_len),
+      static_cast<int>(num_quantizers));
   auto result =
       module_->execute("decode_codes", std::vector<EValue>{*codes_tensor});
+  ET_LOG(Info, "decode_codes returned from Module::execute");
   if (!result.ok()) {
     ET_LOG(Error, "decode_codes execution failed.");
     return false;
   }
   auto outputs = result.get();
-  if (outputs.size() < 2 || !outputs[0].isTensor() || !outputs[1].isTensor()) {
+  if (outputs.empty() || !outputs[0].isTensor()) {
     ET_LOG(Error, "Unexpected decode_codes outputs.");
     return false;
   }
 
   auto wav_tensor = outputs[0].toTensor();
-  auto len_tensor = outputs[1].toTensor();
-  int64_t wav_len = len_tensor.const_data_ptr<int64_t>()[0];
+  int64_t wav_len = -1;
+  if (outputs.size() > 1 && outputs[1].isTensor()) {
+    auto len_tensor = outputs[1].toTensor();
+    if (len_tensor.numel() > 0) {
+      wav_len = len_tensor.const_data_ptr<int64_t>()[0];
+    }
+  }
   if (wav_len <= 0) {
-    ET_LOG(Error, "Decoded waveform length is non-positive.");
-    return false;
+    wav_len =
+        static_cast<int64_t>(codes_len) * static_cast<int64_t>(decode_upsample_rate_);
   }
 
   const int64_t total_samples = wav_tensor.size(wav_tensor.dim() - 1);
+  if (wav_len <= 0 || total_samples <= 0) {
+    ET_LOG(Error, "Decoded waveform length is non-positive.");
+    return false;
+  }
   const int64_t used_samples = std::min(wav_len, total_samples);
   waveform->resize(static_cast<size_t>(used_samples));
 

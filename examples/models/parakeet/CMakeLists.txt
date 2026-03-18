@@ -105,6 +105,16 @@ target_include_directories(
 target_link_libraries(parakeet_runner PUBLIC ${link_libraries})
 target_compile_options(parakeet_runner PUBLIC ${_common_compile_options})
 
+add_library(parakeet_tdt_runtime SHARED parakeet_c_api.cpp tokenizer_utils.cpp)
+if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+  target_link_options_gc_sections(parakeet_tdt_runtime)
+endif()
+target_include_directories(
+  parakeet_tdt_runtime PUBLIC ${_common_include_directories}
+)
+target_link_libraries(parakeet_tdt_runtime PUBLIC ${link_libraries})
+target_compile_options(parakeet_tdt_runtime PUBLIC ${_common_compile_options})
+
 # On Windows, copy required DLLs to the executable directory
 if(MSVC AND EXECUTORCH_BUILD_CUDA)
   add_custom_command(

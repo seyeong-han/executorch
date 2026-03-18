@@ -2,7 +2,7 @@ import json
 import struct
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, List
 
 import torch
 import torch.nn as nn
@@ -77,16 +77,15 @@ class Qwen3TTSSpeechDecoderExport(nn.Module):
         self.decoder = decoder
         self.decode_upsample_rate = int(decode_upsample_rate)
 
-    def forward(self, audio_codes: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
+    def forward(self, audio_codes: torch.Tensor) -> torch.Tensor:
         if audio_codes.dim() != 3:
             raise ValueError(
                 f"audio_codes must be rank-3 [B, T, Q], got {tuple(audio_codes.shape)}"
             )
-        audio_lengths = (audio_codes[..., 0] > -1).sum(1) * self.decode_upsample_rate
         # Decoder expects non-negative code ids.
         clamped_codes = torch.clamp(audio_codes, min=0)
         wav = self.decoder(clamped_codes.transpose(1, 2)).squeeze(1)
-        return wav, audio_lengths
+        return wav
 
 
 def load_decoder_from_metadata(

@@ -273,3 +273,111 @@ Result: **FAIL / TIMEOUT**
 
 - Decoder-only BF16 path also stalled (>5 minutes at ~100% CPU) and was terminated.
 - This indicates the issue is likely in BF16 decode execution itself, not helper code generation.
+
+## 2026-03-15
+
+### Metal bring-up follow-up
+
+#### 1) Metal fp32 export
+
+Command:
+
+```bash
+conda run -n executorch python examples/models/qwen3-tts/export_qwen3_tts.py \
+  --converted-dir examples/models/qwen3-tts/qwen3_tts_artifacts \
+  --backend metal \
+  --fixed-codes-len 1200 \
+  --output-dir examples/models/qwen3-tts/qwen3_tts_exports_metal_fp32
+```
+
+Result: **PASS**
+
+- `model.pte` + `export_manifest.json` generated.
+- Metal lowering path uses linear+bias decomposition and local `cumsum` fallback enablement.
+
+#### 2) Metal runner build
+
+Command:
+
+```bash
+make qwen3-tts-metal
+```
+
+Result: **PASS**
+
+- Binary rebuilt at `cmake-out/examples/models/qwen3-tts/qwen3_tts_runner`.
+
+#### 3) Metal runtime dependency + rebuild fix
+
+Command (before CMake fix):
+
+```bash
+conda run -n executorch cmake-out/examples/models/qwen3-tts/qwen3_tts_runner \
+  --model_path examples/models/qwen3-tts/qwen3_tts_exports_metal_fp32/model.pte \
+  --codes_path examples/models/qwen3-tts/metal_test_codes.bin \
+  --output_wav examples/models/qwen3-tts/output_from_codes_metal_fp32.wav
+```
+
+Result: **FAIL**
+
+- `dyld` error: missing `/opt/llvm-openmp/lib/libomp.dylib`.
+- Local host has Homebrew libomp at `/opt/homebrew/opt/libomp/lib/libomp.dylib`.
+
+Mitigation implemented:
+
+- Added a post-build `install_name_tool` step in `examples/models/qwen3-tts/CMakeLists.txt`
+  to rewrite `/opt/llvm-openmp/lib/libomp.dylib` to local Homebrew `libomp` when present.
+- Rebuilt with `make qwen3-tts-metal`.
+- Verified with `otool -L` that runner now links `/opt/homebrew/opt/libomp/lib/libomp.dylib`.
+
+Command (after CMake fix, no env override):
+
+```bash
+conda run -n executorch cmake-out/examples/models/qwen3-tts/qwen3_tts_runner \
+  --model_path examples/models/qwen3-tts/qwen3_tts_exports_metal_fp32/model.pte \
+  --codes_path examples/models/qwen3-tts/metal_test_codes.bin \
+  --output_wav examples/models/qwen3-tts/output_from_codes_metal_fp32.wav
+```
+
+Result: **FAIL / SEGFAULT**
+
+- Delegate initializes successfully.
+- Runtime then crashes in delegated execution.
+- Early runs showed Metal shader compile failure:
+  - `no 'buffer' resource location available for 'in_ptr30'`
+- After adding stricter fusion limits in export compile options, crash changed to
+  an immediate post-init segfault, but decode still fails.
+
+#### 4) Additional Metal quantization experiments
+
+- `--backend metal --qlinear 8da4w`: export **PASS**, runtime **FAIL**
+  (`Unsupported dtype: 1` in metal runtime tensor creation).
+- `--backend metal --qlinear 8w`: export **PASS**, runtime **FAIL**
+  (`Unsupported dtype: 1`).
+- `--backend metal --qlinear fpa4w`: export **FAIL** at trace/export
+  (`activations.is_contiguous()` assertion in `torchao._linear_fp_act_4bit_weight`).
+- `--backend metal --qlinear 4w --dtype bf16`: export **FAIL** on this host
+  (`Torch not compiled with CUDA enabled` in quantization path).
+
+#### 5) Current Metal status
+
+- Metal export path: **working**
+- Metal runner build path: **working**
+- Runner `libomp` loader issue on this host: **fixed** in CMake for rebuilt binaries.
+- Metal runtime decode for Qwen3-TTS decoder: **blocked**
+  by backend/runtime limitations observed above.
+
+#### 6) Regression check for CPU/XNNPACK path
+
+Command:
+
+```bash
+conda run -n executorch cmake-out/examples/models/qwen3-tts/qwen3_tts_runner \
+  --model_path examples/models/qwen3-tts/qwen3_tts_exports_fp32/model.pte \
+  --codes_path examples/models/qwen3-tts/metal_test_codes.bin \
+  --output_wav examples/models/qwen3-tts/output_from_codes_xnn_recheck.wav
+```
+
+Result: **PASS** (`elapsed ~38.4s`)
+
+- Confirms recent runner/export changes did not regress XNNPACK decode.

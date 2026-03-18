@@ -636,16 +636,16 @@ class LMAttention(nn.Module):
         self.wv = nn.Linear(config.dim, self.n_kv_heads * self.head_dim, bias=False)
         self.wo = nn.Linear(self.n_heads * self.head_dim, config.dim, bias=False)
 
-        # Choose KV cache and SDPA based on backend
+        # Choose KV cache and SDPA based on backend.
+        # All backends use StaticKVCache (index_copy_) for export-friendly
+        # mutable buffer updates. The custom op KVCache (update_cache) has
+        # mutation issues with pybindings.
         if self.backend == "metal":
             self.kv_cache = StaticKVCache(max_seq_len, self.n_kv_heads, self.head_dim)
             self.sdpa = MetalSDPA(self.n_heads, self.n_kv_heads, self.head_dim)
-        elif self.backend == "cuda":
+        else:
             self.kv_cache = StaticKVCache(max_seq_len, self.n_kv_heads, self.head_dim)
             self.sdpa = CudaSDPA(self.n_heads, self.n_kv_heads, self.head_dim)
-        else:
-            self.kv_cache = KVCache(max_seq_len, self.n_kv_heads, self.head_dim)
-            self.sdpa = SDPA(self.n_heads, self.head_dim)
 
     def forward(
         self,

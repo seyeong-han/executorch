@@ -76,6 +76,12 @@ Runner binary:
 cmake-out/examples/models/qwen3-tts/qwen3_tts_runner
 ```
 
+Metal build:
+
+```bash
+make qwen3-tts-metal
+```
+
 ## 4) Run end-to-end text -> wav
 
 ```bash
@@ -102,8 +108,48 @@ conda run -n executorch cmake-out/examples/models/qwen3-tts/qwen3_tts_runner \
   --output_wav examples/models/qwen3-tts/output_clone.wav
 ```
 
+Decode-only command (useful for backend validation):
+
+```bash
+conda run -n executorch cmake-out/examples/models/qwen3-tts/qwen3_tts_runner \
+  --model_path examples/models/qwen3-tts/qwen3_tts_exports_fp32/model.pte \
+  --codes_path examples/models/qwen3-tts/metal_test_codes.bin \
+  --output_wav examples/models/qwen3-tts/output_from_codes.wav
+```
+
+## 5) Metal export status
+
+Export command:
+
+```bash
+conda run -n executorch python examples/models/qwen3-tts/export_qwen3_tts.py \
+  --converted-dir examples/models/qwen3-tts/qwen3_tts_artifacts \
+  --backend metal \
+  --fixed-codes-len 1200 \
+  --output-dir examples/models/qwen3-tts/qwen3_tts_exports_metal_fp32
+```
+
+Metal runtime invocation:
+
+```bash
+conda run -n executorch cmake-out/examples/models/qwen3-tts/qwen3_tts_runner \
+  --model_path examples/models/qwen3-tts/qwen3_tts_exports_metal_fp32/model.pte \
+  --codes_path examples/models/qwen3-tts/metal_test_codes.bin \
+  --output_wav examples/models/qwen3-tts/output_from_codes_metal_fp32.wav
+```
+
+If you are using an older runner binary (built before this README update), use:
+
+```bash
+conda run -n executorch env DYLD_LIBRARY_PATH="/opt/homebrew/opt/libomp/lib:/usr/lib" \
+  cmake-out/examples/models/qwen3-tts/qwen3_tts_runner ...
+```
+
 ## Notes
 
+- Metal export and Metal-target runner build are validated.
+- Runner build now rewrites stale `/opt/llvm-openmp/...` linkage to local Homebrew `libomp` on macOS.
+- Metal decode runtime is currently blocked by a backend crash in delegated execution.
 - Export currently uses static `--fixed-codes-len` due dynamic-shape guard issues.
 - All experiment commands and outcomes are tracked in `PROGRESS.md`.
 - Architecture and repository research context is tracked in `CONTEXT.md`.

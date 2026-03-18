@@ -32,7 +32,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--backend",
-        choices=["portable", "xnnpack"],
+        choices=["portable", "xnnpack", "metal"],
         default="xnnpack",
         help="Backend to target for decoder export.",
     )
@@ -72,10 +72,35 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="Optional packing format for 4w quantization.",
     )
+    parser.add_argument(
+        "--metal-safe-fusion",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help=(
+            "Enable Metal safe-fusion compile profile (lower fusion pressure, "
+            "helps avoid oversized shader kernels)."
+        ),
+    )
     return parser.parse_args()
 
 
-def lower_to_executorch(programs, constant_methods: dict, backend: str):
+def _linear_bias_decomposition(input, weight, bias=None):
+    """
+    Decompose linear+bias into matmul+add for Metal compatibility.
+    """
+    weight_t = torch.ops.aten.t.default(weight)
+    out = torch.ops.aten.matmul.default(input, weight_t)
+    if bias is not None:
+        return torch.ops.aten.add.Tensor(out, bias)
+    return out
+
+
+def lower_to_executorch(
+    programs,
+    constant_methods: dict,
+    backend: str,
+    metal_safe_fusion: bool = True,
+):
     if backend == "xnnpack":
         from executorch.backends.xnnpack.partition.xnnpack_partitioner import (
             XnnpackDynamicallyQuantizedPartitioner,
@@ -88,6 +113,24 @@ def lower_to_executorch(programs, constant_methods: dict, backend: str):
                 XnnpackPartitioner(),
             ]
         }
+    elif backend == "metal":
+        from executorch.backends.apple.metal.metal_backend import MetalBackend
+        from executorch.backends.apple.metal.metal_partitioner import MetalPartitioner
+
+        updated_programs = {}
+        for key, ep in programs.items():
+            updated_programs[key] = ep.run_decompositions(
+                {torch.ops.aten.linear.default: _linear_bias_decomposition}
+            )
+        programs = updated_programs
+
+        partitioner = {}
+        for key in programs:
+            compile_specs = [MetalBackend.generate_method_name_compile_spec(key)]
+            compile_specs.append(
+                MetalBackend.generate_safe_fusion_compile_spec(metal_safe_fusion)
+            )
+            partitioner[key] = [MetalPartitioner(compile_specs)]
     else:
         partitioner = []
 
@@ -111,6 +154,9 @@ def lower_to_executorch(programs, constant_methods: dict, backend: str):
 
 def main() -> None:
     args = parse_args()
+    if args.qlinear == "fpa4w" and args.backend != "metal":
+        raise ValueError("--qlinear=fpa4w can only be used with --backend=metal")
+
     output_dir = args.output_dir.resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -153,7 +199,10 @@ def main() -> None:
     constant_methods["fixed_codes_len"] = int(args.fixed_codes_len)
 
     et_prog = lower_to_executorch(
-        programs, constant_methods=constant_methods, backend=args.backend
+        programs,
+        constant_methods=constant_methods,
+        backend=args.backend,
+        metal_safe_fusion=args.metal_safe_fusion,
     )
     model_path = output_dir / "model.pte"
     with model_path.open("wb") as f:

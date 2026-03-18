@@ -116,6 +116,12 @@ class ETMetalShaderLibrary {
 
   std::shared_ptr<ETMetalKernelFunction> getKernelFunction(
       const std::string& name);
+  bool isCompiled() const {
+    return compiled_;
+  }
+  const std::string& lastError() const {
+    return last_error_;
+  }
 
  private:
   void compileLibrary();
@@ -130,6 +136,8 @@ class ETMetalShaderLibrary {
       std::string,
       std::pair<MTLComputePipelineState_t, MTLFunction_t>>
       pipelineStates_;
+  bool compiled_ = false;
+  std::string last_error_;
 };
 
 // =======================
@@ -180,6 +188,16 @@ class ETMetalKernelFunction {
   ~ETMetalKernelFunction();
 
   void startEncoding();
+  bool hasError() const {
+    return has_error_;
+  }
+  const std::string& lastError() const {
+    return last_error_;
+  }
+  void clearError() {
+    has_error_ = false;
+    last_error_.clear();
+  }
   void setArg(unsigned idx, const executorch::runtime::etensor::Tensor& tensor);
   void setArg(unsigned idx, int64_t val);
   void setArg(unsigned idx, uint32_t val);
@@ -211,9 +229,14 @@ class ETMetalKernelFunction {
   void runCommandBlock(std::function<void(void)> f);
 
  private:
+  void recordError(const std::string& message);
+  std::string kernelName() const;
+
   MTLComputePipelineState_t cps_;
   MTLFunction_t func_;
   MTLComputeCommandEncoder_t encoder_;
+  bool has_error_ = false;
+  std::string last_error_;
 };
 
 // =======================

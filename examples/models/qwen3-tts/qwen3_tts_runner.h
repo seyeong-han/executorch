@@ -74,6 +74,7 @@ class Qwen3TTSRunner {
  private:
   std::unique_ptr<::executorch::extension::Module> module_;
   int output_sample_rate_ = 24000;
+  int decode_upsample_rate_ = 1;
   int fixed_codes_len_ = -1;
 };
 

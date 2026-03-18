@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 
 import typing
+from enum import Enum
 from typing import Any, Dict, final, List
 
 from executorch.backends.aoti.aoti_backend import AotiBackend
@@ -24,6 +25,30 @@ class MetalBackend(AotiBackend, BackendDetails):
     using the Executorch runtime.
     """
 
+    class COMPILE_SPEC_KEYS(Enum):
+        SAFE_FUSION = "metal_safe_fusion"
+
+    @classmethod
+    def _safe_fusion_enabled(cls, compile_specs: List[CompileSpec]) -> bool:
+        for spec in compile_specs:
+            if spec.key == cls.COMPILE_SPEC_KEYS.SAFE_FUSION.value:
+                raw = spec.value.decode("utf-8").strip().lower()
+                if raw in ("1", "true", "yes", "on"):
+                    return True
+                if raw in ("0", "false", "no", "off"):
+                    return False
+                raise RuntimeError(
+                    f"Invalid {cls.COMPILE_SPEC_KEYS.SAFE_FUSION.value} value: {raw}"
+                )
+        return False
+
+    @classmethod
+    def generate_safe_fusion_compile_spec(cls, enabled: bool) -> CompileSpec:
+        return CompileSpec(
+            cls.COMPILE_SPEC_KEYS.SAFE_FUSION.value,
+            b"1" if enabled else b"0",
+        )
+
     @classmethod
     def get_device_name(cls) -> str:
         return "metal"
@@ -35,6 +60,7 @@ class MetalBackend(AotiBackend, BackendDetails):
             "aoti_torch_mps_convolution": None,
             "aoti_torch_mps_mm_out": None,
             "at::_ops::_scaled_dot_product_attention_math_for_mps::call": None,
+            "at::_ops::cumsum::call": None,
             "torchao::_linear_fp_act_4bit_weight": None,
         }
 
@@ -72,5 +98,21 @@ class MetalBackend(AotiBackend, BackendDetails):
         from torchao.experimental.ops.mps.cshim import torchao_op_c_shim
 
         inductor_configs["aot_inductor.custom_ops_to_c_shims"] = torchao_op_c_shim
+        if cls._safe_fusion_enabled(compile_specs):
+            inductor_configs.update(
+                {
+                    "max_autotune": False,
+                    "epilogue_fusion": False,
+                    "prologue_fusion": False,
+                    "batch_fusion": False,
+                    "group_fusion": False,
+                    "aggressive_fusion": False,
+                    "pre_grad_fusion_options": {},
+                    "post_grad_fusion_options": {},
+                    "max_fusion_size": 16,
+                    "max_fusion_buffer_group_pairwise_attempts": 8,
+                    "max_fusion_unique_io_buffers": 24,
+                }
+            )
 
         return inductor_configs

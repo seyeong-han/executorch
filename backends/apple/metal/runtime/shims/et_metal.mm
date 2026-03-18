@@ -381,9 +381,12 @@ ETMetalShaderLibrary::~ETMetalShaderLibrary() {
 
 void ETMetalShaderLibrary::compileLibrary() {
     @autoreleasepool {
+        compiled_ = false;
+        last_error_.clear();
         id<MTLDevice> device = get_metal_device();
         if (!device) {
-            ET_LOG(Error, "ETMetalShaderLibrary: Failed to get Metal device");
+            last_error_ = "Failed to get Metal device";
+            ET_LOG(Error, "ETMetalShaderLibrary: %s", last_error_.c_str());
             return;
         }
 
@@ -398,12 +401,14 @@ void ETMetalShaderLibrary::compileLibrary() {
 
         library_ = [device newLibraryWithSource:sourceString options:options error:&error];
         if (!library_ || error) {
-            ET_LOG(Error, "ETMetalShaderLibrary: Failed to compile shader library: %s",
-                   error ? [[error localizedDescription] UTF8String] : "unknown error");
+            const char* message =
+                error ? [[error localizedDescription] UTF8String] : "unknown error";
+            last_error_ = std::string("Failed to compile shader library: ") + message;
+            ET_LOG(Error, "ETMetalShaderLibrary: %s", last_error_.c_str());
             return;
         }
 
-        [library_ retain];
+        compiled_ = true;
         ET_LOG(Debug, "ETMetalShaderLibrary: Successfully compiled shader library");
     }
 }
@@ -416,34 +421,45 @@ std::pair<id<MTLComputePipelineState>, id<MTLFunction>> ETMetalShaderLibrary::ge
 
     @autoreleasepool {
         if (!library_) {
-            ET_LOG(Error, "ETMetalShaderLibrary: Library not compiled");
+            if (last_error_.empty()) {
+                ET_LOG(Error, "ETMetalShaderLibrary: Library not compiled");
+            } else {
+                ET_LOG(
+                    Error,
+                    "ETMetalShaderLibrary: Library not compiled (%s)",
+                    last_error_.c_str());
+            }
             return {nil, nil};
         }
 
         id<MTLDevice> device = get_metal_device();
         if (!device) {
-            ET_LOG(Error, "ETMetalShaderLibrary: Failed to get Metal device");
+            last_error_ = "Failed to get Metal device while creating pipeline";
+            ET_LOG(Error, "ETMetalShaderLibrary: %s", last_error_.c_str());
             return {nil, nil};
         }
 
         NSString* funcName = [NSString stringWithUTF8String:functionName.c_str()];
         id<MTLFunction> function = [library_ newFunctionWithName:funcName];
         if (!function) {
-            ET_LOG(Error, "ETMetalShaderLibrary: Failed to get function '%s'", functionName.c_str());
+            last_error_ = std::string("Failed to get function '") + functionName + "'";
+            ET_LOG(Error, "ETMetalShaderLibrary: %s", last_error_.c_str());
             return {nil, nil};
         }
 
         NSError* error = nil;
         id<MTLComputePipelineState> pipelineState = [device newComputePipelineStateWithFunction:function error:&error];
         if (!pipelineState || error) {
-            ET_LOG(Error, "ETMetalShaderLibrary: Failed to create pipeline state for '%s': %s",
-                   functionName.c_str(), error ? [[error localizedDescription] UTF8String] : "unknown error");
+            const char* message =
+                error ? [[error localizedDescription] UTF8String] : "unknown error";
+            last_error_ =
+                std::string("Failed to create pipeline state for '") + functionName +
+                "': " + message;
+            ET_LOG(Error, "ETMetalShaderLibrary: %s", last_error_.c_str());
             [function release];
             return {nil, nil};
         }
 
-        [pipelineState retain];
-        [function retain];
         pipelineStates_[functionName] = {pipelineState, function};
 
         ET_LOG(Debug, "ETMetalShaderLibrary: Created pipeline state for function '%s'", functionName.c_str());
@@ -454,7 +470,18 @@ std::pair<id<MTLComputePipelineState>, id<MTLFunction>> ETMetalShaderLibrary::ge
 std::shared_ptr<ETMetalKernelFunction> ETMetalShaderLibrary::getKernelFunction(const std::string& name) {
     auto pipelineStatePair = getLibraryPipelineState(name);
     if (!pipelineStatePair.first || !pipelineStatePair.second) {
-        ET_LOG(Error, "ETMetalShaderLibrary::getKernelFunction: Failed to get pipeline state for '%s'", name.c_str());
+        if (last_error_.empty()) {
+            ET_LOG(
+                Error,
+                "ETMetalShaderLibrary::getKernelFunction: Failed to get pipeline state for '%s'",
+                name.c_str());
+        } else {
+            ET_LOG(
+                Error,
+                "ETMetalShaderLibrary::getKernelFunction: Failed to get pipeline state for '%s' (%s)",
+                name.c_str(),
+                last_error_.c_str());
+        }
         return nullptr;
     }
 
@@ -466,7 +493,7 @@ std::shared_ptr<ETMetalKernelFunction> ETMetalShaderLibrary::getKernelFunction(c
 // =======================
 
 ETMetalKernelFunction::ETMetalKernelFunction(id<MTLComputePipelineState> cps, id<MTLFunction> func)
-    : cps_(cps), func_(func), encoder_(nil) {
+    : cps_(cps), func_(func), encoder_(nil), has_error_(false) {
     if (cps_) [cps_ retain];
     if (func_) [func_ retain];
 }
@@ -488,13 +515,46 @@ ETMetalKernelFunction::~ETMetalKernelFunction() {
     }
 }
 
+std::string ETMetalKernelFunction::kernelName() const {
+    @autoreleasepool {
+        if (func_) {
+            NSString* name = [(id<MTLFunction>)func_ name];
+            if (name) {
+                return std::string([name UTF8String]);
+            }
+        }
+    }
+    return "<unknown>";
+}
+
+void ETMetalKernelFunction::recordError(const std::string& message) {
+    has_error_ = true;
+    if (last_error_.empty()) {
+        last_error_ = message;
+    }
+}
+
 void ETMetalKernelFunction::startEncoding() {
     @autoreleasepool {
+        clearError();
+        if (!cps_) {
+            std::string message =
+                "ETMetalKernelFunction::startEncoding: No compute pipeline state for kernel '" +
+                kernelName() + "'";
+            ET_LOG(Error, "%s", message.c_str());
+            recordError(message);
+            return;
+        }
+
         // Don't retain/release the encoder - just get reference from stream
         ETMetalStream* stream = getCurrentMetalStream();
         encoder_ = stream->commandEncoder(); // Use stream's managed encoder
         if (!encoder_) {
-            ET_LOG(Error, "ETMetalKernelFunction: Failed to get encoder from stream");
+            std::string message =
+                "ETMetalKernelFunction::startEncoding: Failed to get encoder from stream for kernel '" +
+                kernelName() + "'";
+            ET_LOG(Error, "%s", message.c_str());
+            recordError(message);
             return;
         }
 
@@ -507,7 +567,11 @@ void ETMetalKernelFunction::startEncoding() {
 
 void ETMetalKernelFunction::setArg(unsigned idx, const executorch::runtime::etensor::Tensor& tensor) {
     if (!encoder_) {
-        ET_LOG(Error, "ETMetalKernelFunction::setArg: No active encoder");
+        std::string message =
+            "ETMetalKernelFunction::setArg: No active encoder for kernel '" +
+            kernelName() + "'";
+        ET_LOG(Error, "%s", message.c_str());
+        recordError(message);
         return;
     }
 
@@ -539,9 +603,15 @@ void ETMetalKernelFunction::setArg(unsigned idx, const executorch::runtime::eten
                         ET_LOG(Debug, "ETMetalKernelFunction::setArg: Set large CPU tensor via temporary buffer at index %u (size: %zu)", idx, totalSize);
                     } else {
                         ET_LOG(Error, "ETMetalKernelFunction::setArg: Failed to create temporary buffer for index %u", idx);
+                        recordError(
+                            "ETMetalKernelFunction::setArg: Failed to create temporary buffer for kernel '" +
+                            kernelName() + "', arg index " + std::to_string(idx));
                     }
                 } else {
                     ET_LOG(Error, "ETMetalKernelFunction::setArg: No Metal device available for index %u", idx);
+                    recordError(
+                        "ETMetalKernelFunction::setArg: No Metal device for kernel '" +
+                        kernelName() + "', arg index " + std::to_string(idx));
                 }
             }
         }
@@ -550,7 +620,11 @@ void ETMetalKernelFunction::setArg(unsigned idx, const executorch::runtime::eten
 
 void ETMetalKernelFunction::setArg(unsigned idx, int64_t val) {
     if (!encoder_) {
-        ET_LOG(Error, "ETMetalKernelFunction::setArg: No active encoder");
+        std::string message =
+            "ETMetalKernelFunction::setArg(int64): No active encoder for kernel '" +
+            kernelName() + "'";
+        ET_LOG(Error, "%s", message.c_str());
+        recordError(message);
         return;
     }
 
@@ -560,7 +634,11 @@ void ETMetalKernelFunction::setArg(unsigned idx, int64_t val) {
 
 void ETMetalKernelFunction::setArg(unsigned idx, uint32_t val) {
     if (!encoder_) {
-        ET_LOG(Error, "ETMetalKernelFunction::setArg: No active encoder");
+        std::string message =
+            "ETMetalKernelFunction::setArg(uint32): No active encoder for kernel '" +
+            kernelName() + "'";
+        ET_LOG(Error, "%s", message.c_str());
+        recordError(message);
         return;
     }
 
@@ -570,7 +648,11 @@ void ETMetalKernelFunction::setArg(unsigned idx, uint32_t val) {
 
 void ETMetalKernelFunction::setArg(unsigned idx, float val) {
     if (!encoder_) {
-        ET_LOG(Error, "ETMetalKernelFunction::setArg: No active encoder");
+        std::string message =
+            "ETMetalKernelFunction::setArg(float): No active encoder for kernel '" +
+            kernelName() + "'";
+        ET_LOG(Error, "%s", message.c_str());
+        recordError(message);
         return;
     }
 
@@ -580,7 +662,11 @@ void ETMetalKernelFunction::setArg(unsigned idx, float val) {
 
 void ETMetalKernelFunction::setArg(unsigned idx, bool val) {
     if (!encoder_) {
-        ET_LOG(Error, "ETMetalKernelFunction::setArg: No active encoder");
+        std::string message =
+            "ETMetalKernelFunction::setArg(bool): No active encoder for kernel '" +
+            kernelName() + "'";
+        ET_LOG(Error, "%s", message.c_str());
+        recordError(message);
         return;
     }
 
@@ -590,7 +676,11 @@ void ETMetalKernelFunction::setArg(unsigned idx, bool val) {
 
 void ETMetalKernelFunction::setArg(unsigned idx, const void* data, size_t size) {
     if (!encoder_) {
-        ET_LOG(Error, "ETMetalKernelFunction::setArg: No active encoder");
+        std::string message =
+            "ETMetalKernelFunction::setArg(bytes): No active encoder for kernel '" +
+            kernelName() + "'";
+        ET_LOG(Error, "%s", message.c_str());
+        recordError(message);
         return;
     }
 
@@ -600,7 +690,11 @@ void ETMetalKernelFunction::setArg(unsigned idx, const void* data, size_t size) 
 
 void ETMetalKernelFunction::setArgUint3(unsigned idx, uint32_t x, uint32_t y, uint32_t z) {
     if (!encoder_) {
-        ET_LOG(Error, "ETMetalKernelFunction::setArgUint3: No active encoder");
+        std::string message =
+            "ETMetalKernelFunction::setArgUint3: No active encoder for kernel '" +
+            kernelName() + "'";
+        ET_LOG(Error, "%s", message.c_str());
+        recordError(message);
         return;
     }
 
@@ -612,12 +706,32 @@ void ETMetalKernelFunction::setArgUint3(unsigned idx, uint32_t x, uint32_t y, ui
 
 void ETMetalKernelFunction::dispatchSingle(uint64_t length) {
     if (!encoder_) {
-        ET_LOG(Error, "ETMetalKernelFunction::dispatchSingle: No active encoder");
+        std::string message =
+            "ETMetalKernelFunction::dispatchSingle: No active encoder for kernel '" +
+            kernelName() + "'";
+        ET_LOG(Error, "%s", message.c_str());
+        recordError(message);
         return;
     }
 
     const auto maxThreadsPerGroup = static_cast<uint64_t>([cps_ maxTotalThreadsPerThreadgroup]);
-    uint64_t actualGroupSize = std::min(maxThreadsPerGroup, length);
+    static uint64_t maxDispatchThreads = [] {
+        uint64_t value = 256; // Conservative default to avoid oversized threadgroups.
+        const char* env = std::getenv("ET_METAL_MAX_DISPATCH_THREADS");
+        if (env) {
+            try {
+                uint64_t parsed = static_cast<uint64_t>(std::stoull(env));
+                if (parsed > 0) {
+                    value = parsed;
+                }
+            } catch (const std::exception&) {
+                ET_LOG(Error, "Invalid ET_METAL_MAX_DISPATCH_THREADS value: '%s'", env);
+            }
+        }
+        return value;
+    }();
+    uint64_t actualGroupSize = std::min(std::min(maxThreadsPerGroup, maxDispatchThreads), length);
+    actualGroupSize = std::max<uint64_t>(1, actualGroupSize);
 
     auto size = MTLSizeMake(length, 1, 1);
     auto threadGroupSize = MTLSizeMake(actualGroupSize, 1, 1);
@@ -631,12 +745,35 @@ void ETMetalKernelFunction::dispatchSingle(uint64_t length) {
 
 void ETMetalKernelFunction::dispatchSingleWithGroupSize(uint64_t length, uint64_t group_size) {
     if (!encoder_) {
-        ET_LOG(Error, "ETMetalKernelFunction::dispatchSingleWithGroupSize: No active encoder");
+        std::string message =
+            "ETMetalKernelFunction::dispatchSingleWithGroupSize: No active encoder for kernel '" +
+            kernelName() + "'";
+        ET_LOG(Error, "%s", message.c_str());
+        recordError(message);
         return;
     }
 
     const auto maxThreadsPerGroup = static_cast<uint64_t>([cps_ maxTotalThreadsPerThreadgroup]);
-    uint64_t actualGroupSize = group_size > 0 ? std::min(group_size, maxThreadsPerGroup) : std::min(maxThreadsPerGroup, length);
+    static uint64_t maxDispatchThreads = [] {
+        uint64_t value = 256;
+        const char* env = std::getenv("ET_METAL_MAX_DISPATCH_THREADS");
+        if (env) {
+            try {
+                uint64_t parsed = static_cast<uint64_t>(std::stoull(env));
+                if (parsed > 0) {
+                    value = parsed;
+                }
+            } catch (const std::exception&) {
+                ET_LOG(Error, "Invalid ET_METAL_MAX_DISPATCH_THREADS value: '%s'", env);
+            }
+        }
+        return value;
+    }();
+    uint64_t actualGroupSize = group_size > 0 ? group_size : length;
+    actualGroupSize = std::min(actualGroupSize, maxThreadsPerGroup);
+    actualGroupSize = std::min(actualGroupSize, maxDispatchThreads);
+    actualGroupSize = std::min(actualGroupSize, length);
+    actualGroupSize = std::max<uint64_t>(1, actualGroupSize);
 
     auto size = MTLSizeMake(length, 1, 1);
     auto threadGroupSize = MTLSizeMake(actualGroupSize, 1, 1);
@@ -650,12 +787,19 @@ void ETMetalKernelFunction::dispatchSingleWithGroupSize(uint64_t length, uint64_
 
 void ETMetalKernelFunction::dispatchArray(const uint64_t* length, size_t length_size) {
     if (!encoder_) {
-        ET_LOG(Error, "ETMetalKernelFunction::dispatchArray: No active encoder");
+        std::string message =
+            "ETMetalKernelFunction::dispatchArray: No active encoder for kernel '" +
+            kernelName() + "'";
+        ET_LOG(Error, "%s", message.c_str());
+        recordError(message);
         return;
     }
 
     if (!length || length_size == 0) {
         ET_LOG(Error, "ETMetalKernelFunction::dispatchArray: Invalid length array");
+        recordError(
+            "ETMetalKernelFunction::dispatchArray: Invalid length array for kernel '" +
+            kernelName() + "'");
         return;
     }
 
@@ -692,12 +836,19 @@ void ETMetalKernelFunction::dispatchArray(const uint64_t* length, size_t length_
 void ETMetalKernelFunction::dispatchArrayWithGroupSize(const uint64_t* length, size_t length_size,
                                                       const uint64_t* group_size, size_t group_size_size) {
     if (!encoder_) {
-        ET_LOG(Error, "ETMetalKernelFunction::dispatchArrayWithGroupSize: No active encoder");
+        std::string message =
+            "ETMetalKernelFunction::dispatchArrayWithGroupSize: No active encoder for kernel '" +
+            kernelName() + "'";
+        ET_LOG(Error, "%s", message.c_str());
+        recordError(message);
         return;
     }
 
     if (!length || length_size == 0) {
         ET_LOG(Error, "ETMetalKernelFunction::dispatchArrayWithGroupSize: Invalid length array");
+        recordError(
+            "ETMetalKernelFunction::dispatchArrayWithGroupSize: Invalid length array for kernel '" +
+            kernelName() + "'");
         return;
     }
 
@@ -746,12 +897,20 @@ void ETMetalKernelFunction::dispatchArrayWithGroupSize(const uint64_t* length, s
 void ETMetalKernelFunction::dispatchThreadgroups(uint64_t gridX, uint64_t gridY, uint64_t gridZ,
                                                   uint64_t threadsX, uint64_t threadsY, uint64_t threadsZ) {
     if (!encoder_) {
-        ET_LOG(Error, "ETMetalKernelFunction::dispatchThreadgroups: No active encoder");
+        std::string message =
+            "ETMetalKernelFunction::dispatchThreadgroups: No active encoder for kernel '" +
+            kernelName() + "'";
+        ET_LOG(Error, "%s", message.c_str());
+        recordError(message);
         return;
     }
 
     if (!cps_) {
-        ET_LOG(Error, "ETMetalKernelFunction::dispatchThreadgroups: No compute pipeline state");
+        std::string message =
+            "ETMetalKernelFunction::dispatchThreadgroups: No compute pipeline state for kernel '" +
+            kernelName() + "'";
+        ET_LOG(Error, "%s", message.c_str());
+        recordError(message);
         return;
     }
 
@@ -764,6 +923,9 @@ void ETMetalKernelFunction::dispatchThreadgroups(uint64_t gridX, uint64_t gridY,
     if (totalThreads > maxThreadsPerGroup) {
         ET_LOG(Error, "ETMetalKernelFunction::dispatchThreadgroups: Requested %llu total threads per threadgroup exceeds device maximum of %llu",
                (unsigned long long)totalThreads, (unsigned long long)maxThreadsPerGroup);
+        recordError(
+            "ETMetalKernelFunction::dispatchThreadgroups: Requested threadgroup size exceeds device maximum for kernel '" +
+            kernelName() + "'");
         return;
     }
 

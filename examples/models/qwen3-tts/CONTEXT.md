@@ -4,7 +4,9 @@
 
 - Target model: `Qwen/Qwen3-TTS-12Hz-0.6B-Base`
 - Target path: `examples/models/qwen3-tts`
-- Backend: XNNPACK (CPU)
+- Backend priority:
+  1. XNNPACK first
+  2. Metal follow-up
 
 ## Reference patterns used
 
@@ -86,7 +88,7 @@ talker generation into ExecuTorch in a follow-up phase.
 
 - `model.py`
   - defines `Qwen3TTSSpeechDecoderExport` wrapper.
-  - computes output lengths from codec tokens and runs decoder forward.
+  - clamps padded codec ids and runs decoder forward.
 - `export_qwen3_tts.py`
   - lowers wrapper to ExecuTorch.
   - attaches `constant_methods` metadata:
@@ -109,6 +111,7 @@ talker generation into ExecuTorch in a follow-up phase.
   - loads exported decoder `.pte`.
   - optionally invokes helper script for codec generation.
   - pads codec sequence to `fixed_codes_len` and decodes waveform.
+  - trims final waveform to `codes_len * decode_upsample_rate`.
   - writes PCM16 WAV output.
 
 ## Why fixed-length export is used
@@ -120,10 +123,21 @@ talker generation into ExecuTorch in a follow-up phase.
 - Runner-side padding with sentinel `-1` preserves true output trimming through
   decoder length metadata.
 
+## Metal path status
+
+- `CMakePresets.json` includes `qwen3-tts-metal` configure/build presets.
+- `Makefile` includes `qwen3-tts-metal` target.
+- `export_qwen3_tts.py` now includes explicit Metal lowering:
+  - linear+bias decomposition (`aten.linear -> matmul + add`).
+  - local fallback allowlist patch for `aten::cumsum`.
+  - reduced Inductor fusion settings for this model graph.
+- Current blocker: Metal decode runtime still crashes in delegated execution
+  for this decoder graph on local Apple GPU validation.
+
 ## Follow-up work suggested by this bring-up
 
 1. Move talker autoregressive generation into ExecuTorch methods
    (prefill/decode-step style).
 2. Investigate BF16 decode runtime stall observed in current experiments.
-3. Add Metal backend support for the speech decoder.
+3. Root-cause Metal delegated decode crash and upstream a minimal reproducer.
 4. Replace helper-script dependency with fully in-runner ExecuTorch graph path.

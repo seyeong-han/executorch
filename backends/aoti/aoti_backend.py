@@ -208,7 +208,7 @@ class AotiBackend(ABC):
                     "Please add them to the AOTI backend."
                 )
 
-        # Extract paths - weights are always separated
+        # Extract generated artifact paths
         so_path = None
         blob_path = None
 
@@ -221,18 +221,27 @@ class AotiBackend(ABC):
         else:
             so_path = paths
 
-        if so_path is None or blob_path is None:
+        constants_in_so = bool(options.get("aot_inductor.package_constants_in_so", False))
+        if so_path is None:
             raise RuntimeError(
-                f"Could not find required files in compiled paths, got {paths}"
+                f"Could not find required .wrapper.so file in compiled paths, got {paths}"
+            )
+        if blob_path is None and not constants_in_so:
+            raise RuntimeError(
+                "Could not find required .wrapper_weights.blob file in compiled "
+                f"paths, got {paths}. Set aot_inductor.package_constants_in_so=True "
+                "for constants-in-so packaging."
             )
 
         # Read SO file
         with open(so_path, "rb") as f:
             so_data = f.read()
 
-        # Read weights blob
-        with open(blob_path, "rb") as f:
-            blob_data = f.read()
+        # Read weights blob when constants are emitted separately.
+        blob_data = None
+        if blob_path is not None:
+            with open(blob_path, "rb") as f:
+                blob_data = f.read()
 
         # Create named data store
         named_data_store = NamedDataStore()
@@ -245,13 +254,15 @@ class AotiBackend(ABC):
             f"aoti_{device_name}_blob" if cls.save_data_externally() else None
         )
 
-        named_data_store.add_named_data(
-            method_name + "_weights_blob", blob_data, 1, external_tag
-        )
+        if blob_data is not None:
+            named_data_store.add_named_data(
+                method_name + "_weights_blob", blob_data, 1, external_tag
+            )
 
         # Clean up the generated files
         os.remove(so_path)
-        os.remove(blob_path)
+        if blob_path is not None:
+            os.remove(blob_path)
 
         return PreprocessResult(
             processed_bytes=b"",

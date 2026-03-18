@@ -91,7 +91,7 @@
 #
 # ==============================================================================
 
-.PHONY: voxtral-cuda voxtral-cpu voxtral-metal voxtral_realtime-cuda voxtral_realtime-cpu voxtral_realtime-metal qwen3-tts-cpu whisper-cuda whisper-cuda-debug whisper-cpu whisper-metal parakeet-cuda parakeet-cuda-debug parakeet-cpu parakeet-metal sortformer-cuda sortformer-cpu silero-vad-cpu llama-cuda llama-cuda-debug llama-cpu llava-cpu gemma3-cuda gemma3-cpu clean help
+.PHONY: voxtral-cuda voxtral-cpu voxtral-metal voxtral_realtime-cuda voxtral_realtime-cpu voxtral_realtime-metal qwen3-tts-cpu qwen3-tts-metal whisper-cuda whisper-cuda-debug whisper-cpu whisper-metal parakeet-cuda parakeet-cuda-debug parakeet-cpu parakeet-metal sortformer-cuda sortformer-cpu silero-vad-cpu llama-cuda llama-cuda-debug llama-cpu llava-cpu gemma3-cuda gemma3-cpu clean help
 
 help:
 	@echo "This Makefile adds targets to build runners for various models on various backends. Run using \`make <target>\`. Available targets:"
@@ -102,6 +102,7 @@ help:
 	@echo "  voxtral_realtime-cpu - Build Voxtral Realtime runner with CPU backend"
 	@echo "  voxtral_realtime-metal - Build Voxtral Realtime runner with Metal backend (macOS only)"
 	@echo "  qwen3-tts-cpu      - Build Qwen3-TTS runner with CPU backend"
+	@echo "  qwen3-tts-metal    - Build Qwen3-TTS runner with Metal backend (macOS only)"
 	@echo "  whisper-cuda        - Build Whisper runner with CUDA backend"
 	@echo "  whisper-cuda-debug  - Build Whisper runner with CUDA backend (debug mode)"
 	@echo "  whisper-cpu         - Build Whisper runner with CPU backend"
@@ -270,6 +271,15 @@ qwen3-tts-cpu:
 	cmake --workflow --preset llm-release
 	@echo "==> Building Qwen3-TTS runner (CPU)..."
 	cd examples/models/qwen3-tts && cmake --workflow --preset qwen3-tts-cpu
+	@echo ""
+	@echo "✓ Build complete!"
+	@echo "  Binary: cmake-out/examples/models/qwen3-tts/qwen3_tts_runner"
+
+qwen3-tts-metal:
+	@echo "==> Building and installing ExecuTorch with Metal..."
+	cmake --workflow --preset llm-release-metal
+	@echo "==> Building Qwen3-TTS runner with Metal..."
+	cd examples/models/qwen3-tts && cmake --workflow --preset qwen3-tts-metal
 	@echo ""
 	@echo "✓ Build complete!"
 	@echo "  Binary: cmake-out/examples/models/qwen3-tts/qwen3_tts_runner"

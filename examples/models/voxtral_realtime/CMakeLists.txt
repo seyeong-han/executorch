@@ -106,6 +106,24 @@ target_compile_options(
   voxtral_realtime_runner PUBLIC ${_common_compile_options}
 )
 
+add_library(
+  voxtral_realtime_runtime
+  SHARED
+  voxtral_realtime_runner.cpp
+  voxtral_realtime_c_api.cpp
+)
+if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+  target_link_options_gc_sections(voxtral_realtime_runtime)
+endif()
+
+target_include_directories(
+  voxtral_realtime_runtime PUBLIC ${_common_include_directories}
+)
+target_link_libraries(voxtral_realtime_runtime PUBLIC ${link_libraries})
+target_compile_options(
+  voxtral_realtime_runtime PUBLIC ${_common_compile_options}
+)
+
 # On Windows, copy required DLLs to the executable directory
 if(MSVC AND EXECUTORCH_BUILD_CUDA)
   add_custom_command(

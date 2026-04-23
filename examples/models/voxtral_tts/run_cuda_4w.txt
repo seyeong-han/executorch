@@ -1,0 +1,104 @@
+# Voxtral TTS — CUDA runner test commands (paste into shell)
+# Updated 2026-04-23 — full CUDA pipeline (LM + codec both on GPU, ~3.7 s wall clock)
+#
+# These are intended for interactive use. Set the env vars below once per
+# shell, then copy any TEST block.
+
+# ===========================================================================
+# Required env (set once per shell)
+# ===========================================================================
+unset CPATH                                              # critical — avoids CUDA-13 header pollution
+export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
+
+VOXTRAL_DIR="${VOXTRAL_DIR:?set: e.g. ~/models/mistralai/Voxtral-4B-TTS-2603}"
+EXPORT_DIR="${EXPORT_DIR:?set: e.g. $PWD/voxtral_tts_exports_cuda_4w}"
+RUNNER="${RUNNER:-./cmake-out/examples/models/voxtral_tts/voxtral_tts_runner}"
+
+# ===========================================================================
+# TEST 1 — basic sanity: short prompt, neutral_female, seed 42
+# Expected: ~3-4 s wall clock, ~32-40 frames (~2.5-3.2 s audio)
+# ===========================================================================
+"$RUNNER" \
+  --model "$EXPORT_DIR/model.pte" \
+  --data_path "$EXPORT_DIR/aoti_cuda_blob.ptd" \
+  --codec "$EXPORT_DIR/codec_decoder.pte" \
+  --codec_data_path "$EXPORT_DIR/codec_aoti_cuda_blob.ptd" \
+  --tokenizer "$VOXTRAL_DIR/tekken.json" \
+  --voice "$VOXTRAL_DIR/voice_embedding/neutral_female.pt" \
+  --text "Hello, how are you today?" \
+  --output /tmp/test1_short.wav \
+  --seed 42 \
+  --max_new_tokens 100
+
+# ===========================================================================
+# TEST 2 — different voice (male) + different prompt + different seed
+# Expected: ~5-6 s wall clock, ~50 frames (~4 s audio)
+# ===========================================================================
+"$RUNNER" \
+  --model "$EXPORT_DIR/model.pte" \
+  --data_path "$EXPORT_DIR/aoti_cuda_blob.ptd" \
+  --codec "$EXPORT_DIR/codec_decoder.pte" \
+  --codec_data_path "$EXPORT_DIR/codec_aoti_cuda_blob.ptd" \
+  --tokenizer "$VOXTRAL_DIR/tekken.json" \
+  --voice "$VOXTRAL_DIR/voice_embedding/casual_male.pt" \
+  --text "The quick brown fox jumps over the lazy dog." \
+  --output /tmp/test2_male.wav \
+  --seed 123 \
+  --max_new_tokens 200
+
+# ===========================================================================
+# TEST 3 — long prompt (paragraph), needs higher --max_new_tokens
+# Expected: ~10-15 s wall clock, ~150-200 frames (~12-16 s audio)
+# ===========================================================================
+"$RUNNER" \
+  --model "$EXPORT_DIR/model.pte" \
+  --data_path "$EXPORT_DIR/aoti_cuda_blob.ptd" \
+  --codec "$EXPORT_DIR/codec_decoder.pte" \
+  --codec_data_path "$EXPORT_DIR/codec_aoti_cuda_blob.ptd" \
+  --tokenizer "$VOXTRAL_DIR/tekken.json" \
+  --voice "$VOXTRAL_DIR/voice_embedding/neutral_female.pt" \
+  --text "Birds sing melodiously in the tall oak trees as the morning sun casts golden rays across the peaceful meadow. A gentle breeze carries the sweet scent of wildflowers through the valley." \
+  --output /tmp/test3_long.wav \
+  --seed 42 \
+  --max_new_tokens 500
+
+# ===========================================================================
+# TEST 4 — live playback (--speaker pipes raw f32le PCM to stdout)
+# ===========================================================================
+"$RUNNER" \
+  --model "$EXPORT_DIR/model.pte" \
+  --data_path "$EXPORT_DIR/aoti_cuda_blob.ptd" \
+  --codec "$EXPORT_DIR/codec_decoder.pte" \
+  --codec_data_path "$EXPORT_DIR/codec_aoti_cuda_blob.ptd" \
+  --tokenizer "$VOXTRAL_DIR/tekken.json" \
+  --voice "$VOXTRAL_DIR/voice_embedding/cheerful_female.pt" \
+  --text "Streaming directly to your speakers, in real time." \
+  --output /tmp/test4_speaker.wav \
+  --seed 42 \
+  --max_new_tokens 200 \
+  --speaker | aplay -f FLOAT_LE -r 24000 -c 1
+# (or: ... --speaker | ffplay -f f32le -ar 24000 -i -)
+
+# ---------------------------------------------------------------------------
+# After running:
+#   ls -la /tmp/test*.wav            # ~24 KB per second of audio
+#   ffplay /tmp/test1_short.wav      # listen
+#   aplay  /tmp/test1_short.wav      # alternative
+# ---------------------------------------------------------------------------
+
+# ===========================================================================
+# Knobs reference:
+#   --text "..."             prompt text to synthesize
+#   --voice .../<name>.pt    one of: neutral_female, neutral_male,
+#                            casual_female, casual_male, cheerful_female,
+#                            ar_male, de_female, de_male, es_female, es_male,
+#                            fr_female, fr_male
+#                            (under $VOXTRAL_DIR/voice_embedding/)
+#   --seed <int>             RNG seed (semantic sampling + flow noise)
+#   --max_new_tokens <int>   frame cap (~12.5 frames/sec audio; use 500+ for paragraphs)
+#   --output <path>          .wav output (24 kHz mono 16-bit PCM)
+#   --temperature <0..1>     sampling temperature (0 = greedy default; >0 randomizes)
+#   --streaming              chunked codec emission (lower per-chunk latency)
+#   --speaker                pipe raw f32le PCM to stdout for live playback
+#   --trace_json <path>      dump structured per-frame parity trace JSON
+# ===========================================================================

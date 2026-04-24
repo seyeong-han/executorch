@@ -1,0 +1,104 @@
+name: gemma4-parity
+
+# Numerical-parity gate for the Gemma 4 model. Runs the layer-by-layer HF
+# parity tests + bit-exact text_decoder wrapper test on any PR that touches
+# the Gemma 4 sources, the shared llama transformer infra, or the multimodal
+# runner pieces Gemma 4 depends on. Catches regressions in shared code that
+# silently break Gemma 4 (e.g. the PLE/h= path bug fixed in v11).
+#
+# Skips on forks (HF download requires GEMMA4_HF_TOKEN secret).
+
+on:
+  pull_request:
+    paths:
+      - 'examples/models/gemma4/**'
+      - 'examples/models/llama/llama_transformer.py'
+      - 'examples/models/llama/attention.py'
+      - 'examples/models/llama/rope.py'
+      - 'examples/models/llama/feed_forward.py'
+      - 'examples/models/llama/model_args.py'
+      - 'examples/models/llama/source_transformation/sdpa.py'
+      - 'examples/models/llama/source_transformation/custom_kv_cache.py'
+      - 'extension/llm/runner/multimodal_prefiller.cpp'
+      - 'extension/llm/runner/multimodal_prefiller.h'
+      - 'extension/llm/runner/text_token_generator.h'
+      - 'extension/llm/runner/multimodal_decoder_runner.h'
+      - 'extension/llm/export/config/llm_config.py'
+      - '.github/workflows/gemma4-parity.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: gemma4-parity-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  parity:
+    # Skip on forks — HF download requires a token only available on the
+    # upstream repo. External contributors can run the tests locally.
+    if: github.event.pull_request.head.repo.full_name == github.repository ||
+        github.event_name == 'workflow_dispatch'
+    runs-on: linux.4xlarge.memory
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: 'false'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Cache HF Gemma 4 E2B checkpoint
+        id: cache-hf
+        uses: actions/cache@v4
+        with:
+          path: ~/models/gemma-4-E2B-it
+          # Bump the version suffix when the checkpoint is updated upstream.
+          key: hf-gemma-4-e2b-it-v1
+
+      - name: Download HF checkpoint
+        if: steps.cache-hf.outputs.cache-hit != 'true'
+        env:
+          HF_TOKEN: ${{ secrets.GEMMA4_HF_TOKEN }}
+        run: |
+          pip install --upgrade huggingface_hub
+          huggingface-cli download google/gemma-4-E2B-it \
+            --local-dir ~/models/gemma-4-E2B-it \
+            --token "$HF_TOKEN"
+
+      - name: Install minimal Python deps
+        run: |
+          pip install --upgrade pip
+          pip install -r examples/models/gemma4/requirements.txt
+          pip install torch torchao executorch
+
+      - name: Convert HF -> ET checkpoint
+        run: |
+          python -m executorch.examples.models.gemma4.convert_weights \
+            ~/models/gemma-4-E2B-it \
+            ~/models/gemma-4-E2B-it/model_et.pth
+
+      - name: Layer-by-layer HF parity (test_parity.py)
+        env:
+          GEMMA4_HF_DIR: /home/runner/models/gemma-4-E2B-it
+          GEMMA4_ET_CHECKPOINT: /home/runner/models/gemma-4-E2B-it/model_et.pth
+        run: |
+          python examples/models/gemma4/tests/test_parity.py
+
+      - name: Bit-exact text_decoder wrapper parity (test_textdec_wrapper.py)
+        env:
+          GEMMA4_HF_DIR: /home/runner/models/gemma-4-E2B-it
+          GEMMA4_ET_CHECKPOINT: /home/runner/models/gemma-4-E2B-it/model_et.pth
+        run: |
+          python examples/models/gemma4/tests/test_textdec_wrapper.py | tee /tmp/wrapper.out
+          # Hard-fail if max_diff is non-zero — that's the PLE-zeroed-out bug.
+          grep -q "max_diff vs ref: 0.0000e+00" /tmp/wrapper.out
+
+      - name: KV-cache prefill/decode parity (test_kvcache_decode.py)
+        env:
+          GEMMA4_HF_DIR: /home/runner/models/gemma-4-E2B-it
+          GEMMA4_ET_CHECKPOINT: /home/runner/models/gemma-4-E2B-it/model_et.pth
+        run: |
+          python examples/models/gemma4/tests/test_kvcache_decode.py

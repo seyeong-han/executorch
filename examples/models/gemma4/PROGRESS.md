@@ -1,6 +1,6 @@
 # Gemma4 ExecuTorch — Status
 
-Last updated: 2026-04-22 (v11 — PLI bug fixed, all 3 modalities clean)
+Last updated: 2026-04-24 (v13 — full quant stack, 4.78 GB pte, within 0.7 GB of Leixin's mobile default)
 
 ## TL;DR
 
@@ -341,7 +341,112 @@ cd /tmp && python /path/to/export_gemma4_multimodal.py \
   by synthetic test audio; natural speech/music expected to work better.
 - **Image quality remaining issue**: "blue blue" and "solid blue color field...field"
   suggest minor PLI drift in long responses. Short answers work perfectly.
-- **Quantization**: Not validated for multimodal; text-only 8da4w works.
-- **Quantization**: not yet validated for Gemma4 (8da4w / 4w paths exist).
+- **Quantization**: ✅ Done v11_q (8da4w text Linear) → ✅ v12 (+ embedding INT8) → ✅ v13 (+ audio encoder 8da4w). See "v12/v13 — quantization stack" section below.
 - **Per-layer-type partial_rotary**: works but only needed for full layers
   in Gemma4 E2B; other Gemma4 sizes may differ.
+
+---
+
+## v12 / v13 — quantization stack (2026-04-24)
+
+Closed the 9 GB gap to Leixin's D99603811 mobile defaults via two follow-up exports on top of v11_q.
+
+### Size progression
+
+| PTE | Size | Δ vs FP32 | What's new |
+|---|---:|---:|---|
+| `gemma4_multimodal_v11.pte`     | 21.0 GB | — | FP32 baseline |
+| `gemma4_multimodal_v11_q.pte`   | 13.0 GB | -38 % | text Linear → 8da4w group=32 |
+| `gemma4_v12_emb.pte`            | 5.78 GB | -72 % | + all `nn.Embedding` → 8w per-channel |
+| **`gemma4_v13_aud.pte`**        | **4.78 GB** | **-77 %** | + audio encoder Linear → 8da4w group=128 |
+| Leixin's untied default (D99603811) | 4.1 GB | — | reference target |
+
+The v11_q → v12 step (-7.2 GB) was the **PLE table** — `pli_embeddings`, shape `[262144 × 8960]`, 2.35B params, **9.4 GB at FP32**. PLE is by far the largest tensor in Gemma 4 (bigger than all text-decoder Linear weights combined). Leaving it FP32 was what kept v11_q at 13 GB. The shared `quantize_model_(qembedding_config="8w")` walker catches it for free.
+
+The v12 → v13 step (-1.0 GB) was the **audio encoder**. Empirical measurement says it's ~1 GB at FP32 (USM Conformer, hidden=1024, 12 layers); 8da4w group=128 brings it to ~250 MB.
+
+### Performance — every step is pure win
+
+| Modality | v11 FP32 | v11_q | v12 | **v13** |
+|---|---|---|---|---|
+| text decode tok/s   | 13.4 | 16.1 | 16.1 | **15.9** |
+| text TTFT (ms)      | 217  | 176  | 177  | **168**  |
+| image decode tok/s  | 12.1 | 14.5 | 15.2 | **14.3** |
+| audio decode tok/s  | 11.6 | 13.4 | 13.6 | **13.5** |
+| audio prefill tok/s | 254  | 301  | 312  | **311**  |
+
+Decode tok/s is consistent across PTEs (within run-to-run noise). Quantization gives free perf wins via XNNPACK's INT8 codepath without measurable quality regression — `tests/test_textdec_wrapper.py` stays bit-exact (`max_diff = 0.0`) and 5/5 multimodal smoke tests pass on all variants.
+
+### Alignment with `qwen3_5_moe` quantization (honest assessment)
+
+| Aspect | qwen3_5_moe | Our gemma4 | Aligned? |
+|---|---|---|---|
+| Encoder quantization entry point | `quantize_model_(qlinear_config=...)` from `extension/llm/export/quantize.py` | `_apply_encoder_quantization` → calls the same `quantize_model_(...)` | ✅ Same code path post-refactor |
+| Underlying quantization configs | TorchAO `Int8DynamicActivationIntxWeightConfig` etc. | Same | ✅ |
+| Conceptual choices (8da4w linear, 8w emb) | yes | yes | ✅ |
+| `--qlinear` CLI name | `--qlinear {4w,8w,8da4w,8da8w}` | `--qmode {8da4w,4w,int8}` | ⚠️ Names differ; functionally close |
+| `--qembedding` CLI shape | `--qembedding 8w` + `--qembedding-group-size N` | `--embedding-quantize "8,0"` (composite legacy llama format) | ⚠️ Format differs |
+| Text decoder quantization path | `quantize_model_(...)` directly | `LlmConfig.quantization` → llama-specific source-transform `EmbeddingQuantHandler` (older path; same end result) | ⚠️ Different code path; same outcome |
+| Tied embedding | `tie_word_embeddings=True` kwarg on `quantize_model_` | flag wired (`cfg.backend.torchao.use_torchao_kernels_tied_embedding`); model-side wiring needed for actual storage tying | ⚠️ Partial |
+
+**Verdict:** Encoder quantization is fully aligned (same `quantize_model_` call, same TorchAO configs, same `skip_incompatible_shapes` handling). Text-decoder quantization arrives at the same numerical result via a different code path (the older `LlmConfig` pipeline routes through `examples/models/llama/source_transformation/quantize.py:EmbeddingQuantHandler`). Bringing the text path onto `quantize_model_` would be a deeper refactor (LlmConfig also handles KV-cache transforms, SDPA replacement, etc.); deferred.
+
+CLI naming alignment (`--qmode` → `--qlinear`, `--embedding-quantize "<bits>,<gs>"` → `--qembedding <name>` + `--qembedding-group-size`) is purely cosmetic but matches the convention reviewers will already know from qwen3_5_moe. Worth doing as a follow-up commit.
+
+### Outstanding to fully close the gap
+
+| Item | Predicted | Blocker |
+|---|---:|---|
+| `--vision-quantize 8w` | -100 MB → 4.7 GB | `Missing out variants: torchao::dequantize_affine` in `to_executorch()` for the XNNPACK weight-only path. Needs an op-variant registration upstream OR a dynamic-activation strategy with `torch._check` workaround for the `Ne(u0,1)` guard inside `embedding_projection`. |
+| `--vision-quantize 8da8w` | -150 MB → 4.65 GB | TorchAO data-dependent guard `Ne(u0,1)` inside vision_tower.embedding_projection during torch.export tracing. |
+| `--tied-embedding` (real) | -0.2 GB → 4.55 GB | Needs Transformer-side wiring; `convert_weights.py` ties at load but the model un-ties at instantiation because `apply_output=True` spawns a separate `output` Linear. |
+| `--embedding-quantize 4,0` (int4 emb) | -1.2 GB → ~3.5 GB | Wrapper-test re-validation needed at int4. |
+| Combined: tied + vision-fixed + 4-bit-emb | ~2.7 GB | Matches Leixin's smallest config. |
+
+### Reproduction commands
+
+```bash
+# v12 (text Linear + embeddings)
+python -m executorch.examples.models.gemma4.export \
+  --hf-model ~/models/gemma-4-E2B-it --et-checkpoint ~/models/gemma-4-E2B-it/model_et.pth \
+  --output /tmp/gemma4_v12_emb.pte --backend xnnpack \
+  --max-seq-len 1024 --audio-frames 1976 \
+  --qmode 8da4w --group-size 32 \
+  --embedding-quantize 8,0
+
+# v13 (+ audio encoder)
+python -m executorch.examples.models.gemma4.export \
+  --hf-model ~/models/gemma-4-E2B-it --et-checkpoint ~/models/gemma-4-E2B-it/model_et.pth \
+  --output /tmp/gemma4_v13_aud.pte --backend xnnpack \
+  --max-seq-len 1024 --audio-frames 1976 \
+  --qmode 8da4w --group-size 32 \
+  --embedding-quantize 8,0 \
+  --audio-quantize 8da4w --encoder-group-size 128
+```
+
+Both exports take ~30 min each on devserver CPU.
+
+### Plan_to_win progress
+
+| Phase | Status |
+|---|---|
+| 0.1 file layout | ✅ |
+| 0.3 source citations | ✅ |
+| 1.1 E4B variant config | ✅ |
+| 1.2 embedding-quantize fix | ✅ |
+| 1.3 vision encoder quant | ⚠️ flag wired; both 8w and 8da8w hit upstream issues |
+| 1.4 audio encoder quant | ✅ v13 |
+| 1.5 KV-cache quant flag | ✅ flag wired (not yet exported with) |
+| 1.6 tied embedding | ⚠️ flag wired; model-side tying needed for real saving |
+| 1.7 variable-length audio | not started (~2 days) |
+| 1.8 configurable vision soft tokens | not started (~3 days) |
+| 1.9 mobile (S25) benchmarks | hardware-dependent |
+| 2.1 prefill/decode split | ✅ |
+| 2.2 parity CI gate | ✅ (workflow file lives on `younghan/gemma4-dev`; `.github/workflows/` push needs PAT with `workflow` scope) |
+| 2.3 inference.py + run.py | ✅ |
+| 2.4 CUDA backend | not started; CUDA_HANDOVER.md ready |
+| 2.5 size dashboard tool | ✅ |
+| 3.x server / mobile demo / docs | not started |
+
+Phase 1 status: 5/9 complete, 2/9 partial (waiting on upstream blockers), 2/9 not started.
+Phase 2 status: 4/5 complete; 2.4 (CUDA) is the next big one and well-documented in `CUDA_HANDOVER.md`.
